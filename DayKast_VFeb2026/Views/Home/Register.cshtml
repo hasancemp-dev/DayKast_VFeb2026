@@ -315,6 +315,22 @@
                     </div>
                 </div>
 
+                <!-- SÖZLEŞMELER -->
+                <div class="agreements-section" style="margin:20px 0;">
+                    <div class="agreement-item" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                        <input type="checkbox" id="termsCheck" name="termsAccepted" value="true" style="width:18px; height:18px; accent-color:#667eea; cursor:pointer;" onclick="return false;" />
+                        <label style="cursor:pointer; font-size:14px; color:#555; margin:0;">
+                            <a href="javascript:void(0)" onclick="openAgreementModal('terms')" style="color:#667eea; font-weight:600; text-decoration:underline;">Kullanım Şartları ve Gizlilik Politikası</a>'nı okudum ve kabul ediyorum. *
+                        </label>
+                    </div>
+                    <div class="agreement-item" style="display:flex; align-items:center; gap:10px;">
+                        <input type="checkbox" id="newsletterCheck" name="newsletterAccepted" value="true" style="width:18px; height:18px; accent-color:#667eea; cursor:pointer;" onclick="return false;" />
+                        <label style="cursor:pointer; font-size:14px; color:#555; margin:0;">
+                            <a href="javascript:void(0)" onclick="openAgreementModal('newsletter')" style="color:#667eea; font-weight:600; text-decoration:underline;">Kampanya ve Yeniliklerden</a> haberdar olmak istiyorum.
+                        </label>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn-register" id="registerBtn">
                     <i class="fas fa-user-plus"></i>
                     <span>Hesap Oluştur</span>
@@ -327,7 +343,127 @@
         </div>
     </div>
 
+    <!-- KULLANIM ŞARTLARI MODAL -->
+    <div id="agreementModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:16px; max-width:600px; width:92%; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:agModalIn 0.3s ease; overflow:hidden;">
+            <div style="padding:20px 24px 12px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between;">
+                <h3 id="agreementTitle" style="margin:0; font-size:17px; color:#333; font-weight:700;"></h3>
+                <button onclick="closeAgreementModal()" style="background:none; border:none; font-size:20px; color:#999; cursor:pointer;">&times;</button>
+            </div>
+            <div id="agreementBody" style="padding:20px 24px; overflow-y:auto; flex:1; font-size:13px; line-height:1.7; color:#555; max-height:55vh;">
+            </div>
+            <div style="padding:16px 24px; border-top:1px solid #eee; display:flex; gap:10px; justify-content:flex-end;">
+                <button id="btnReject" onclick="rejectAgreement()" style="padding:10px 24px; background:#f0f0f0; color:#666; border:none; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer;">Reddediyorum</button>
+                <button id="btnAccept" onclick="acceptAgreement()" disabled style="padding:10px 24px; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:not-allowed; opacity:0.5; transition:all 0.3s;">Kabul Ediyorum</button>
+            </div>
+        </div>
+    </div> 
+
     <script>
+        var currentAgreementType = '';
+
+        var termsContent = '<h4>DayKast Kullanım Şartları ve Gizlilik Politikası</h4>' +
+            '<p><strong>Son güncelleme:</strong> 24 Şubat 2026</p>' +
+            '<p>Bu kullanım şartları, DayKast e-ticaret platformunu (&ldquo;Platform&rdquo;) kullanımınıza ilişkin koşulları belirler. Platformu kullanarak aşağıdaki şartları kabul etmiş sayılırsınız.</p>' +
+            '<h5>1. Genel Koşullar</h5>' +
+            '<p>DayKast, kullanıcılarına çevrimiçi alışveriş hizmeti sunan bir e-ticaret platformudur. Platformu kullanmak için 18 yaşından büyük olmanız veya yasal vasinizin onayını almış olmanız gerekmektedir.</p>' +
+            '<h5>2. Hesap Güvenliği</h5>' +
+            '<p>Hesabınızın güvenliğinden siz sorumlusunuz. Şifrenizi kimseyle paylaşmayın. Hesabınızda yetkisiz erişim tespit ederseniz derhal bize bildirin. DayKast, hesap güvenliğinizle ilgili ihmaller sonucu oluşan zararlardan sorumlu tutulamaz.</p>' +
+            '<h5>3. Sipariş ve Ödeme</h5>' +
+            '<p>Tüm siparişler, ödemenin onaylanmasının ardından işleme alınır. Fiyatlar vergiler dahil olmayabilir. DayKast, fiyatları önceden haber vermeksizin değiştirme hakkını saklı tutar. Sipariş sonrası iptal ve iade işlemleri, ilgili mevzuat çerçevesinde gerçekleştirilir.</p>' +
+            '<h5>4. Kişisel Verilerin Korunması</h5>' +
+            '<p>DayKast, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında kişisel verilerinizi korur. Toplanan veriler:</p>' +
+            '<ul><li>Ad, soyad, e-posta adresi, telefon numarası</li><li>Adres bilgileri</li><li>Sipariş geçmişi ve favori ürünler</li><li>IP adresi ve tarayıcı bilgileri</li></ul>' +
+            '<p>Verileriniz, yalnızca hizmet sunumu, sipariş işlemleri ve yasal yükümlülükler kapsamında işlenir. Üçüncü taraflarla açık rızanız olmadan paylaşılmaz.</p>' +
+            '<h5>5. Çerez Politikası</h5>' +
+            '<p>Platformumuz, kullanıcı deneyimini iyileştirmek amacıyla çerezler kullanır. Çerezler; oturum yönetimi, tercih kaydetme ve istatistiksel analiz amacıyla kullanılmaktadır. Tarayıcı ayarlarınızdan çerezleri yönetebilirsiniz.</p>' +
+            '<h5>6. İade ve Cayma Hakkı</h5>' +
+            '<p>6502 sayılı Tüketicinin Korunması Hakkında Kanun uyarınca, satın aldığınız ürünleri teslim tarihinden itibaren 14 gün içinde iade edebilirsiniz. İade edilecek ürünlerin kullanılmamış, ambalajı açılmamış ve orijinal durumunda olması gerekmektedir.</p>' +
+            '<h5>7. Fikri Mülkiyet</h5>' +
+            '<p>Platformdaki tüm içerik, logo, tasarım ve yazılım DayKast\'a aittir. İzinsiz kopyalama, dağıtma veya değiştirme yasaktır.</p>' +
+            '<h5>8. Sorumluluk Sınırı</h5>' +
+            '<p>DayKast, platformun kesintisiz veya hatasız çalışacağını garanti etmez. Mücbir sebepler nedeniyle oluşan gecikmeler veya aksaklıklardan DayKast sorumlu tutulamaz.</p>' +
+            '<h5>9. Uyuşmazlık Çözümü</h5>' +
+            '<p>Bu şartlardan doğan uyuşmazlıklarda Türkiye Cumhuriyeti kanunları uygulanır. Uyuşmazlıkların çözümünde İstanbul Mahkemeleri ve İcra Daireleri yetkilidir.</p>' +
+            '<h5>10. Değişiklikler</h5>' +
+            '<p>DayKast, bu kullanım şartlarını önceden bildirimde bulunmaksızın değiştirme hakkını saklı tutar. Güncel şartlar her zaman bu sayfada yayınlanır.</p>' +
+            '<p style="margin-top:20px;"><em>Bu sözleşmeyi sonuna kadar okuyarak &ldquo;Kabul Ediyorum&rdquo; butonunu aktif hale getirebilirsiniz.</em></p>';
+
+        var newsletterContent = '<h4>Kampanya ve Yenilik Bildirimleri Sözleşmesi</h4>' +
+            '<p><strong>Son güncelleme:</strong> 24 Şubat 2026</p>' +
+            '<p>Bu sözleşme, DayKast tarafından gönderilen ticari elektronik iletilere ilişkin koşulları düzenler.</p>' +
+            '<h5>1. Ticari Elektronik İleti Onayı</h5>' +
+            '<p>Bu sözleşmeyi kabul ederek, DayKast tarafından e-posta, SMS ve/veya push bildirim yoluyla aşağıdaki içeriklerin gönderilmesine onay vermiş olursunuz:</p>' +
+            '<ul><li>Yeni ürün duyuruları</li><li>İndirim ve kampanya bilgilendirmeleri</li><li>Özel teklifler ve kişiselleştirilmiş öneriler</li><li>Sezonluk fırsatlar ve kupon kodları</li></ul>' +
+            '<h5>2. Veri Kullanımı</h5>' +
+            '<p>Bildirim tercihiniz kapsamında aşağıdaki veriler işlenebilir:</p>' +
+            '<ul><li>E-posta adresiniz</li><li>Telefon numaranız</li><li>Alışveriş geçmişiniz ve ilgi alanlarınız</li><li>Platformdaki davranış verileriniz (ziyaret edilen sayfalar, favoriler)</li></ul>' +
+            '<h5>3. İleti Sıklığı</h5>' +
+            '<p>DayKast, haftada en fazla 3 adet ticari elektronik ileti gönderecektir. Özel kampanya dönemlerinde (Black Friday, yılbaşı vb.) bu sayı geçici olarak artabilir.</p>' +
+            '<h5>4. İptal Hakkı</h5>' +
+            '<p>6563 sayılı Elektronik Ticaretin Düzenlenmesi Hakkında Kanun uyarınca, ticari elektronik ileti almayı istediğiniz zaman reddedebilirsiniz. Her iletinin altında yer alan &ldquo;Abonelikten Çık&rdquo; bağlantısını kullanarak veya hesap ayarlarınızdan bildirim tercihlerinizi güncelleyerek bu hakkınızı kullanabilirsiniz.</p>' +
+            '<h5>5. Üçüncü Taraflar</h5>' +
+            '<p>DayKast, bildirim hizmeti kapsamında toplanan verilerinizi üçüncü taraflarla paylaşmaz. Yalnızca e-posta gönderim altyapısı hizmet sağlayıcıları ile teknik düzeyde paylaşım yapılabilir.</p>' +
+            '<h5>6. Yasal Dayanak</h5>' +
+            '<p>Bu sözleşme, 6698 sayılı KVKK ve 6563 sayılı Elektronik Ticaretin Düzenlenmesi Hakkında Kanun kapsamında düzenlenmiştir.</p>' +
+            '<p style="margin-top:20px;"><em>Bu sözleşmeyi sonuna kadar okuyarak &ldquo;Kabul Ediyorum&rdquo; butonunu aktif hale getirebilirsiniz.</em></p>';
+
+        function openAgreementModal(type) {
+            currentAgreementType = type;
+            var modal = document.getElementById('agreementModal');
+            var title = document.getElementById('agreementTitle');
+            var body = document.getElementById('agreementBody');
+            var btnAccept = document.getElementById('btnAccept');
+
+            if (type === 'terms') {
+                title.textContent = 'Kullanım Şartları ve Gizlilik Politikası';
+                body.innerHTML = termsContent;
+            } else {
+                title.textContent = 'Kampanya ve Yenilik Bildirimleri';
+                body.innerHTML = newsletterContent;
+            }
+
+            // Reset
+            btnAccept.disabled = true;
+            btnAccept.style.opacity = '0.5';
+            btnAccept.style.cursor = 'not-allowed';
+            body.scrollTop = 0;
+
+            modal.style.display = 'flex';
+
+            // Scroll dinle
+            body.onscroll = function () {
+                if (body.scrollTop + body.clientHeight >= body.scrollHeight - 10) {
+                    btnAccept.disabled = false;
+                    btnAccept.style.opacity = '1';
+                    btnAccept.style.cursor = 'pointer';
+                }
+            };
+        }
+
+        function closeAgreementModal() {
+            document.getElementById('agreementModal').style.display = 'none';
+        }
+
+        function acceptAgreement() {
+            if (currentAgreementType === 'terms') {
+                document.getElementById('termsCheck').checked = true;
+            } else {
+                document.getElementById('newsletterCheck').checked = true;
+            }
+            closeAgreementModal();
+        }
+
+        function rejectAgreement() {
+            if (currentAgreementType === 'terms') {
+                document.getElementById('termsCheck').checked = false;
+            } else {
+                document.getElementById('newsletterCheck').checked = false;
+            }
+            closeAgreementModal();
+        }
+
+        // Form gönderilmeden önce kontrol
         document.getElementById('registerForm').addEventListener('submit', function (e) {
             var pw = document.getElementById('password').value;
             var cpw = document.getElementById('confirmPassword').value;
@@ -335,6 +471,13 @@
             if (pw !== cpw) {
                 e.preventDefault();
                 alert('Şifreler eşleşmiyor!');
+                return;
+            }
+
+            // Kullanım şartları zorunlu
+            if (!document.getElementById('termsCheck').checked) {
+                e.preventDefault();
+                alert('Devam edebilmek için Kullanım Şartları\'nı okuyup kabul etmeniz gerekmektedir.');
                 return;
             }
 

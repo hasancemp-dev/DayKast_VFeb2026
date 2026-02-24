@@ -259,6 +259,7 @@
         $.ajax({
             url: '/Home/ToggleFavorite',
             type: 'POST',
+            dataType: 'json',
             data: { productId: productId },
             success: function(res) {
                 if (res.success) {
@@ -282,24 +283,32 @@
                     btn.classList.add('fav-pulse');
                     setTimeout(function() { btn.classList.remove('fav-pulse'); }, 400);
                 } else if (res.message === 'login_required') {
-                    window.location.href = '/Home/Login';
+                    showLoginModal();
                 }
+            },
+            error: function() {
+                location.reload();
             }
         });
     }
 
     // Sayfa yüklenince favori durumlarını yükle
     $(document).ready(function() {
-        $.get('/Home/GetFavoriteIds', function(res) {
-            if (res.ids && res.ids.length > 0) {
-                res.ids.forEach(function(pid) {
-                    var btn = document.querySelector('.fav-heart-btn[data-product-id="' + pid + '"]');
-                    if (btn) {
-                        btn.querySelector('i').className = 'fas fa-heart';
-                        btn.classList.add('is-fav');
-                        btn.title = 'Favorilerden Çıkar';
-                    }
-                });
+        $.ajax({
+            url: '/Home/GetFavoriteIds',
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res && res.ids && res.ids.length > 0) {
+                    res.ids.forEach(function(pid) {
+                        var btn = document.querySelector('.fav-heart-btn[data-product-id="' + pid + '"]');
+                        if (btn) {
+                            btn.querySelector('i').className = 'fas fa-heart';
+                            btn.classList.add('is-fav');
+                            btn.title = 'Favorilerden Çıkar';
+                        }
+                    });
+                }
             }
         });
     });

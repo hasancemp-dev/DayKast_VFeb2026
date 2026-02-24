@@ -14,6 +14,7 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.MemberID)
+        <input type="hidden" name="CurrentPasswordHash" value="@Model.Password" />
 
         <div class="form-group">
             @Html.LabelFor(model => model.FirstName, "Ad", htmlAttributes: new { @class = "control-label col-md-2" })
@@ -48,10 +49,29 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Password, "Şifre", htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">Eski Şifre</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                <input type="password" name="OldPassword" id="OldPassword" class="form-control" placeholder="Mevcut şifreyi girin" required />
+                @if (ViewBag.PasswordError != null)
+                {
+                    <span class="text-danger">@ViewBag.PasswordError</span>
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Yeni Şifre</label>
+            <div class="col-md-10">
+                <input type="password" name="NewPassword" id="NewPassword" class="form-control" placeholder="Yeni şifre (değiştirmek istemiyorsanız boş bırakın)" />
+                <small class="text-muted">Şifreyi değiştirmek istemiyorsanız bu alanı boş bırakabilirsiniz.</small>
+            </div>
+        </div>
+
+        <div class="form-group" id="confirmGroup" style="display:none;">
+            <label class="control-label col-md-2">Yeni Şifre Tekrar</label>
+            <div class="col-md-10">
+                <input type="password" id="NewPasswordConfirm" class="form-control" placeholder="Yeni şifreyi tekrar girin" />
+                <span id="newPasswordMatchError" class="text-danger" style="display:none;">Yeni şifreler eşleşmiyor!</span>
             </div>
         </div>
 
@@ -142,3 +162,36 @@
 <div>
     @Html.ActionLink("Tüm Liste", "Index")
 </div>
+
+<script>
+    // Yeni şifre girildiğinde tekrar alanını göster
+    document.getElementById('NewPassword').addEventListener('input', function () {
+        var confirmGroup = document.getElementById('confirmGroup');
+        confirmGroup.style.display = this.value.length > 0 ? 'block' : 'none';
+        if (this.value.length === 0) {
+            document.getElementById('NewPasswordConfirm').value = '';
+            document.getElementById('newPasswordMatchError').style.display = 'none';
+        }
+    });
+
+    // Gerçek zamanlı eşleşme kontrolü
+    document.getElementById('NewPasswordConfirm').addEventListener('input', function () {
+        var newPwd = document.getElementById('NewPassword').value;
+        var errorSpan = document.getElementById('newPasswordMatchError');
+        errorSpan.style.display = (this.value && this.value !== newPwd) ? 'block' : 'none';
+    });
+
+    // Form gönderilmeden önce kontrol
+    document.querySelector('form').addEventListener('submit', function (e) {
+        var newPwd = document.getElementById('NewPassword').value;
+        if (newPwd.length > 0) {
+            var confirmPwd = document.getElementById('NewPasswordConfirm').value;
+            if (newPwd !== confirmPwd) {
+                e.preventDefault();
+                document.getElementById('newPasswordMatchError').style.display = 'block';
+                document.getElementById('NewPasswordConfirm').focus();
+                return false;
+            }
+        }
+    });
+</script>

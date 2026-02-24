@@ -331,6 +331,37 @@
             height: 300px;
         }
     }
+
+    /* Favori butonu (detay sayfa) */
+    .detail-fav-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        border: 2px solid #e0e0e0;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 20px;
+        color: #ccc;
+        flex-shrink: 0;
+    }
+    .detail-fav-btn:hover {
+        border-color: #e8553d;
+        color: #e8553d;
+        transform: scale(1.08);
+    }
+    .detail-fav-btn.is-fav {
+        border-color: #e8553d;
+        color: #e8553d;
+        background: #fef2f0;
+    }
+    .detail-fav-btn.is-fav:hover {
+        color: #c0392b;
+        border-color: #c0392b;
+    }
 </style>
 
 <!-- Breadcrumb -->
@@ -423,20 +454,29 @@
                 </div>
             }
 
-            <!-- Sepete Ekle -->
-            @if (Model.StockQuantity > 0)
-            {
-                <button class="detail-add-cart"
-                        onclick="addToCart(@Model.ProductID, '@Html.Raw(Model.ProductName.Replace("'", "\\'"))', @Model.SalePrice.ToString(System.Globalization.CultureInfo.InvariantCulture), '@(Model.ProductImages != null && Model.ProductImages.Any() ? (Model.ProductImages.FirstOrDefault(pi => pi.IsCoverImage == true) ?? Model.ProductImages.FirstOrDefault()).ImagePath : "")', @Model.StockQuantity)">
-                    <i class="fas fa-cart-plus"></i> Sepete Ekle
+            <!-- Sepete Ekle + Favori -->
+            <div style="display:flex; gap:12px; align-items:center; margin-top:4px;">
+                @if (Model.StockQuantity > 0)
+                {
+                    <button class="detail-add-cart"
+                            onclick="addToCart(@Model.ProductID, '@Html.Raw(Model.ProductName.Replace("'", "\\'"))', @Model.SalePrice.ToString(System.Globalization.CultureInfo.InvariantCulture), '@(Model.ProductImages != null && Model.ProductImages.Any() ? (Model.ProductImages.FirstOrDefault(pi => pi.IsCoverImage == true) ?? Model.ProductImages.FirstOrDefault()).ImagePath : "")', @Model.StockQuantity)">
+                        <i class="fas fa-cart-plus"></i> Sepete Ekle
+                    </button>
+                }
+                else
+                {
+                    <button class="detail-add-cart" disabled>
+                        <i class="fas fa-ban"></i> Tükendi
+                    </button>
+                }
+
+                <button class="detail-fav-btn @(ViewBag.IsFavorite == true ? "is-fav" : "")"
+                        id="detailFavBtn"
+                        onclick="toggleDetailFav(@Model.ProductID)"
+                        title="@(ViewBag.IsFavorite == true ? "Favorilerden Çıkar" : "Favorilere Ekle")">
+                    <i class="@(ViewBag.IsFavorite == true ? "fas" : "far") fa-heart"></i>
                 </button>
-            }
-            else
-            {
-                <button class="detail-add-cart" disabled>
-                    <i class="fas fa-ban"></i> Tükendi
-                </button>
-            }
+            </div>
 
             <!-- Ürün Bilgileri Tablosu -->
             <div class="detail-specs">
@@ -766,45 +806,58 @@
         $.ajax({
             url: '/Home/AddComment',
             type: 'POST',
+            dataType: 'json',
             data: { productId: productId, commentText: text, rating: selectedRating },
             success: function(res) {
-                if (res.success) {
-                    // Boş mesajı kaldır
-                    var noMsg = document.getElementById('noCommentsMsg');
-                    if (noMsg) noMsg.remove();
-
-                    // Yeni yorumu en üste ekle
-                    var starsHtml = '';
-                    for (var i = 1; i <= 5; i++) {
-                        starsHtml += i <= res.comment.rating
-                            ? '<i class="fas fa-star"></i>'
-                            : '<i class="far fa-star"></i>';
-                    }
-
-                    var html = '<div class="comment-item" style="animation:fadeIn 0.4s ease">' +
-                        '<div class="comment-avatar"><i class="fas fa-user-circle"></i></div>' +
-                        '<div class="comment-body">' +
-                        '<div class="comment-meta"><strong>' + res.comment.memberName + '</strong>' +
-                        '<span class="comment-date">' + res.comment.date + '</span></div>' +
-                        '<div class="comment-stars">' + starsHtml + '</div>' +
-                        '<p class="comment-text">' + res.comment.text + '</p>' +
-                        '</div></div>';
-
-                    var list = document.getElementById('commentsList');
-                    list.insertAdjacentHTML('afterbegin', html);
-
-                    // Formu temizle
-                    document.getElementById('commentTextInput').value = '';
-                    selectedRating = 0;
-                    document.querySelectorAll('.star-pick').forEach(function(s) {
-                        s.className = 'far fa-star star-pick';
-                    });
-                    document.getElementById('selectedRatingText').textContent = '';
-                } else if (res.message === 'login_required') {
-                    window.location.href = '/Home/Login';
+                if (res && res.success) {
+                    location.reload();
+                } else if (res && res.message === 'login_required') {
+                    showLoginModal();
                 } else {
-                    alert(res.message);
+                    location.reload();
                 }
+            },
+            error: function() {
+                location.reload();
+            }
+        });
+    }
+    // ====== DETAY SAYFA FAVORİ TOGGLE ======
+    function toggleDetailFav(productId) {
+        $.ajax({
+            url: '/Home/ToggleFavorite',
+            type: 'POST',
+            dataType: 'json',
+            data: { productId: productId },
+            success: function(res) {
+                if (res && res.success) {
+                    var btn = document.getElementById('detailFavBtn');
+                    var icon = btn.querySelector('i');
+                    if (res.isFavorite) {
+                        btn.classList.add('is-fav');
+                        icon.className = 'fas fa-heart';
+                        btn.title = 'Favorilerden Çıkar';
+                    } else {
+                        btn.classList.remove('is-fav');
+                        icon.className = 'far fa-heart';
+                        btn.title = 'Favorilere Ekle';
+                    }
+                    // Header badge güncelle
+                    var badge = document.getElementById('favBadge');
+                    if (badge) {
+                        if (res.count > 0) {
+                            badge.textContent = res.count;
+                            badge.style.display = 'flex';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                } else if (res && res.message === 'login_required') {
+                    showLoginModal();
+                }
+            },
+            error: function() {
+                location.reload();
             }
         });
     }

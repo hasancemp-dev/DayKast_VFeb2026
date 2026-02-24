@@ -45,7 +45,7 @@
                     <i class="fas fa-shopping-bag"></i>
                     <span class="cart-badge" id="cartBadge">0</span>
                 </button>
-                <a href="#" class="nav-btn fav-header-btn" title="Favorilerim" onclick="event.preventDefault();">
+                <a href="@Url.Action("MyFavorites", "Home")" class="nav-btn fav-header-btn" title="Favorilerim">
                     <i class="fas fa-heart"></i>
                     <span class="fav-badge" id="favBadge" style="display:none;">0</span>
                 </a>
@@ -77,6 +77,9 @@
                     <i class="fas fa-shopping-bag"></i>
                     <span class="cart-badge" id="cartBadge">0</span>
                 </button>
+                <a href="javascript:void(0)" class="nav-btn fav-header-btn" title="Favorilerim" onclick="showLoginModal()">
+                    <i class="far fa-heart"></i>
+                </a>
                 <a href="@Url.Action("Login", "Home")" class="user-menu-btn">
                     <div class="user-avatar"><i class="fas fa-user"></i></div>
                     <span>Giriş Yap</span>
@@ -478,7 +481,155 @@
                 }
             });
         });
+        // Global: Giriş yapılması gerekli modal
+        function showLoginModal() {
+            document.getElementById('loginRequiredModal').style.display = 'flex';
+        }
+        function closeLoginModal() {
+            document.getElementById('loginRequiredModal').style.display = 'none';
+        }
     </script>
     @RenderSection("scripts", required: false)
+
+    <!-- GİRİŞ GEREKLİ MODAL -->
+    <div id="loginRequiredModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:16px; padding:36px 32px; max-width:400px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:modalFadeIn 0.3s ease;">
+            <div style="width:64px; height:64px; margin:0 auto 16px; background:linear-gradient(135deg,#fef2f0,#fde8e4); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                <i class="fas fa-heart" style="font-size:28px; color:#e8553d;"></i>
+            </div>
+            <h3 style="margin:0 0 8px; font-size:18px; color:#333; font-weight:700;">Giriş Yapmanız Gerekiyor</h3>
+            <p style="margin:0 0 24px; font-size:14px; color:#888; line-height:1.5;">Bu özelliği kullanabilmek için lütfen giriş yapın veya kayıt olun.</p>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <a href="@Url.Action("Login", "Home")" style="padding:10px 24px; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border-radius:8px; text-decoration:none; font-size:14px; font-weight:600; transition:all 0.3s;">Giriş Yap</a>
+                <button onclick="closeLoginModal()" style="padding:10px 24px; background:#f0f0f0; color:#666; border:none; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:all 0.3s;">Kapat</button>
+            </div>
+        </div>
+    </div> 
+
+    <!-- ÇEREZ BİLDİRİMİ -->
+    <div id="cookieConsent" style="display:none; position:fixed; bottom:0; left:0; right:0; background:linear-gradient(135deg,#1a1a2e,#16213e); color:#fff; padding:20px 24px; z-index:9998; box-shadow:0 -4px 30px rgba(0,0,0,0.3); animation:cookieSlideUp 0.5s ease;">
+        <div style="max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:250px;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                    <i class="fas fa-cookie-bite" style="font-size:24px; color:#f39c12;"></i>
+                    <strong style="font-size:16px;">Çerez Bildirimi</strong>
+                </div>
+                <p style="margin:0; font-size:13px; color:#ccc; line-height:1.6;">
+                    DayKast, size en iyi deneyimi sunmak için çerezler kullanmaktadır. Çerezler; oturum yönetimi, tercihlerin kaydedilmesi ve site performansının analiz edilmesi amacıyla kullanılır.
+                    <a href="javascript:void(0)" onclick="document.getElementById('cookieDetailModal').style.display='flex'" style="color:#667eea; text-decoration:underline; font-weight:500;">Detaylı Bilgi</a>
+                </p>
+            </div>
+            <div style="display:flex; gap:10px; flex-shrink:0;">
+                <button onclick="acceptCookies()" style="padding:10px 24px; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.3s;">
+                    <i class="fas fa-check"></i> Kabul Et
+                </button>
+                <button onclick="rejectCookies()" style="padding:10px 24px; background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:all 0.3s;">
+                    <i class="fas fa-times"></i> Reddet
+                </button>
+                <button onclick="document.getElementById('cookieSettingsModal').style.display='flex'" style="padding:10px 24px; background:rgba(255,255,255,0.1); color:#ccc; border:1px solid rgba(255,255,255,0.2); border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; transition:all 0.3s;">
+                    <i class="fas fa-cog"></i> Ayarla
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ÇEREZ DETAY MODAL -->
+    <div id="cookieDetailModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:16px; max-width:550px; width:92%; max-height:80vh; overflow-y:auto; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+                <h3 style="margin:0; font-size:17px; color:#333; font-weight:700;"><i class="fas fa-cookie-bite" style="color:#f39c12;"></i> Çerez Politikası</h3>
+                <button onclick="document.getElementById('cookieDetailModal').style.display='none'" style="background:none; border:none; font-size:20px; color:#999; cursor:pointer;">&times;</button>
+            </div>
+            <div style="font-size:13px; line-height:1.7; color:#555;">
+                <p><strong>Çerez Nedir?</strong> Çerezler, web sitemizi ziyaret ettiğinizde tarayıcınıza yerleştirilen küçük metin dosyalarıdır.</p>
+                <h5 style="margin:16px 0 8px; color:#333;">Zorunlu Çerezler</h5>
+                <p>Web sitesinin temel işlevlerini sağlamak için gereklidir. Oturum yönetimi ve güvenlik amacıyla kullanılır. Bu çerezler devre dışı bırakılamaz.</p>
+                <h5 style="margin:16px 0 8px; color:#333;">Analitik Çerezler</h5>
+                <p>Ziyaretçilerin sitemizi nasıl kullandığını anlamamıza yardımcı olur. Sayfa görüntülemeleri, trafik kaynakları gibi bilgileri anonim olarak toplar.</p>
+                <h5 style="margin:16px 0 8px; color:#333;">Pazarlama Çerezleri</h5>
+                <p>Kişiselleştirilmiş reklamlar göstermek için kullanılır. Tercih ve ilgi alanlarınıza göre içerik sunulmasını sağlar.</p>
+                <h5 style="margin:16px 0 8px; color:#333;">Tercih Çerezleri</h5>
+                <p>Dil, bölge gibi tercihlerinizi hatırlayarak sonraki ziyaretlerinizde daha iyi deneyim sunar.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ÇEREZ AYARLAMA MODAL -->
+    <div id="cookieSettingsModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:10000; align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:16px; max-width:480px; width:92%; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+                <h3 style="margin:0; font-size:17px; color:#333; font-weight:700;"><i class="fas fa-cog" style="color:#667eea;"></i> Çerez Ayarları</h3>
+                <button onclick="document.getElementById('cookieSettingsModal').style.display='none'" style="background:none; border:none; font-size:20px; color:#999; cursor:pointer;">&times;</button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:14px;">
+                <label style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:#f8f9fa; border-radius:10px;">
+                    <div>
+                        <strong style="font-size:14px; color:#333;">Zorunlu Çerezler</strong>
+                        <p style="margin:4px 0 0; font-size:12px; color:#888;">Her zaman aktif</p>
+                    </div>
+                    <input type="checkbox" checked disabled style="width:18px; height:18px; accent-color:#667eea;" />
+                </label>
+                <label style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:#f8f9fa; border-radius:10px; cursor:pointer;">
+                    <div>
+                        <strong style="font-size:14px; color:#333;">Analitik Çerezler</strong>
+                        <p style="margin:4px 0 0; font-size:12px; color:#888;">Site kullanım istatistikleri</p>
+                    </div>
+                    <input type="checkbox" id="cookieAnalytic" checked style="width:18px; height:18px; accent-color:#667eea; cursor:pointer;" />
+                </label>
+                <label style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:#f8f9fa; border-radius:10px; cursor:pointer;">
+                    <div>
+                        <strong style="font-size:14px; color:#333;">Pazarlama Çerezleri</strong>
+                        <p style="margin:4px 0 0; font-size:12px; color:#888;">Kişiselleştirilmiş reklamlar</p>
+                    </div>
+                    <input type="checkbox" id="cookieMarketing" checked style="width:18px; height:18px; accent-color:#667eea; cursor:pointer;" />
+                </label>
+                <label style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:#f8f9fa; border-radius:10px; cursor:pointer;">
+                    <div>
+                        <strong style="font-size:14px; color:#333;">Tercih Çerezleri</strong>
+                        <p style="margin:4px 0 0; font-size:12px; color:#888;">Dil ve bölge tercihleri</p>
+                    </div>
+                    <input type="checkbox" id="cookiePreference" checked style="width:18px; height:18px; accent-color:#667eea; cursor:pointer;" />
+                </label>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end;">
+                <button onclick="saveCookieSettings()" style="padding:10px 24px; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;">Kaydet</button>
+                <button onclick="document.getElementById('cookieSettingsModal').style.display='none'" style="padding:10px 24px; background:#f0f0f0; color:#666; border:none; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer;">İptal</button>
+            </div>
+        </div>
+    </div> 
+
+    <script>
+        // Çerez bildirimi kontrolü
+        (function() {
+            if (!localStorage.getItem('cookieConsent')) {
+                document.getElementById('cookieConsent').style.display = 'block';
+            }
+        })();
+
+        function acceptCookies() {
+            localStorage.setItem('cookieConsent', 'accepted');
+            localStorage.setItem('cookieSettings', JSON.stringify({ analytic: true, marketing: true, preference: true }));
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+
+        function rejectCookies() {
+            localStorage.setItem('cookieConsent', 'rejected');
+            localStorage.setItem('cookieSettings', JSON.stringify({ analytic: false, marketing: false, preference: false }));
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+
+        function saveCookieSettings() {
+            var settings = {
+                analytic: document.getElementById('cookieAnalytic').checked,
+                marketing: document.getElementById('cookieMarketing').checked,
+                preference: document.getElementById('cookiePreference').checked
+            };
+            localStorage.setItem('cookieConsent', 'custom');
+            localStorage.setItem('cookieSettings', JSON.stringify(settings));
+            document.getElementById('cookieSettingsModal').style.display = 'none';
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+    </script>
+
 </body>
 </html>

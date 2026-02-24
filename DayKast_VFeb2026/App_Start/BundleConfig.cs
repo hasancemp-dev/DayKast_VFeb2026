@@ -30,7 +30,8 @@ namespace DayKast_VFeb2026
                       "~/Content/Register.css",
                       "~/Content/HomeIndex.css",
                       "~/Content/UserLayout.css",
-                      "~/Content/UserLayout2.css"));
+                      "~/Content/UserLayout2.css",
+                      "~/Content/Checkout.css"));
 
         }
     }

@@ -213,6 +213,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\Checkout.css" />
     <Content Include="Content\HomeIndex.css" />
     <Content Include="Content\Images\android-chrome-192x192.png" />
     <Content Include="Content\Images\android-chrome-512x512.png" />
@@ -484,6 +485,7 @@
     <Content Include="Views\Home\MyOrders.cshtml" />
     <Content Include="Views\Home\OrderSuccess.cshtml" />
     <Content Include="Views\Home\ProductDetail.cshtml" />
+    <Content Include="Views\Home\MyFavorites.cshtml" />
     <Content Include="Views\Orders\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>

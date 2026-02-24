@@ -2,7 +2,7 @@
     ViewBag.Title = "Ödeme";
     Layout = "~/Views/Shared/_UserLayout.cshtml";
 }
-
+@Styles.Render("~/Content/css")
 <div class="checkout-page">
     <!-- SOL: SİPARİŞ ÖZETİ -->
     <div class="checkout-left">
@@ -132,149 +132,7 @@
     </div>
 </div>
 
-<style>
-    .checkout-page {
-        display: flex;
-        gap: 30px;
-        max-width: 1100px;
-        margin: 40px auto;
-        padding: 0 20px;
-    }
-    .checkout-left { flex: 1; }
-    .checkout-right { flex: 1.2; }
-    .checkout-card {
-        background: #fff;
-        border-radius: 14px;
-        padding: 28px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 15px rgba(0,0,0,0.06);
-    }
-    .checkout-card h3 {
-        margin: 0 0 20px 0;
-        font-size: 18px;
-        color: #333;
-    }
-    .checkout-card h3 i { margin-right: 8px; color: #667eea; }
 
-    /* ÜRÜN LİSTESİ */
-    .checkout-item {
-        display: flex;
-        align-items: center;
-        padding: 14px 0;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    .checkout-item:last-child { border-bottom: none; }
-    .checkout-item-icon {
-        width: 50px; height: 50px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-size: 20px;
-        margin-right: 14px; flex-shrink: 0;
-    }
-    .checkout-item-info { flex: 1; }
-    .checkout-item-info h4 { margin: 0; font-size: 14px; color: #333; }
-    .checkout-item-info small { color: #888; }
-    .checkout-item-price { font-weight: 700; color: #333; font-size: 15px; white-space: nowrap; }
-
-    /* ÖZET */
-    .checkout-summary { margin-top: 16px; }
-    .summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: #666; }
-    .summary-row.total { font-size: 18px; color: #333; }
-    .summary-row.total strong { color: #667eea; }
-    .checkout-summary hr { border: none; border-top: 1px dashed #e0e0e0; margin: 8px 0; }
-
-    /* KREDİ KARTI GÖRSELİ */
-    .credit-card-visual {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 16px;
-        padding: 28px 24px;
-        color: #fff;
-        margin-bottom: 24px;
-        position: relative;
-        height: 180px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.35);
-    }
-    .card-chip {
-        width: 44px; height: 32px;
-        background: linear-gradient(135deg, #f0c27f, #daa520);
-        border-radius: 6px;
-    }
-    .card-number { font-size: 22px; letter-spacing: 3px; font-weight: 500; }
-    .card-bottom { display: flex; justify-content: space-between; }
-    .card-bottom small { font-size: 10px; opacity: 0.7; display: block; margin-bottom: 2px; }
-    .card-bottom div:last-child { text-align: right; }
-
-    /* FORM */
-    .card-form .form-group { margin-bottom: 16px; }
-    .card-form label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
-    .card-form input {
-        width: 100%; padding: 12px 14px;
-        border: 2px solid #e8e8e8; border-radius: 10px;
-        font-size: 15px; transition: border-color 0.3s;
-        box-sizing: border-box;
-    }
-    .card-form input:focus { border-color: #667eea; outline: none; }
-    .form-row { display: flex; gap: 14px; }
-    .form-row .form-group { flex: 1; }
-
-    /* TAKSİT */
-    .installment-options { display: flex; flex-direction: column; gap: 8px; }
-    .installment-option {
-        display: flex; align-items: center; cursor: pointer;
-        padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px;
-        transition: all 0.25s;
-    }
-    .installment-option:hover { border-color: #c5cae9; }
-    .installment-option.selected { border-color: #667eea; background: #f5f3ff; }
-    .installment-option input { display: none; }
-    .option-content { display: flex; justify-content: space-between; width: 100%; }
-    .option-label { font-weight: 600; color: #333; }
-    .option-price { font-weight: 700; color: #667eea; }
-
-    /* ÖDEME BUTONU */
-    .btn-pay {
-        width: 100%; padding: 16px;
-        background: linear-gradient(135deg, #27ae60, #2ecc71);
-        border: none; border-radius: 12px;
-        color: #fff; font-size: 17px; font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
-    }
-    .btn-pay:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4); }
-    .btn-pay:active { transform: translateY(0); }
-    .btn-pay i { margin-right: 8px; }
-    .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-    /* KAYITLI KART SEÇENEKLERİ */
-    .saved-card-option {
-        display: flex; align-items: center; cursor: pointer;
-        padding: 12px 14px; border: 2px solid #e8e8e8; border-radius: 12px;
-        transition: all 0.25s;
-    }
-    .saved-card-option:hover { border-color: #c5cae9; background: #fafbff; }
-    .saved-card-option.selected { border-color: #667eea; background: #f5f3ff; }
-    .saved-card-option input[type="radio"] { display: none; }
-    .sco-content { display: flex; align-items: center; gap: 12px; width: 100%; }
-    .sco-icon {
-        width: 40px; height: 40px; border-radius: 10px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-size: 0.95rem; flex-shrink: 0;
-    }
-    .sco-info { display: flex; flex-direction: column; }
-    .sco-label { font-weight: 600; font-size: 0.9rem; color: #333; }
-    .sco-detail { font-size: 0.8rem; color: #888; }
-
-    /* RESPONSIVE */
-    @@media (max-width: 768px) {
-        .checkout-page { flex-direction: column; }
-    }
-</style>
 
 <script>
     (function () {
@@ -421,6 +279,51 @@
             return;
         }
 
+        // Kayıtlı kart seçildiyse modal gösterme, direkt devam et
+        var selectedSaved = document.querySelector('input[name="savedCard"]:checked');
+        if (selectedSaved && selectedSaved.value !== 'new') {
+            executePlaceOrder();
+            return;
+        }
+
+        // Kart zaten kayıtlıysa modal gösterme
+        var existingCards = JSON.parse(localStorage.getItem('daykast_cards') || '[]');
+        var alreadySaved = existingCards.some(function(c) {
+            return c.number === cardNumber;
+        });
+        if (alreadySaved) {
+            executePlaceOrder();
+            return;
+        }
+
+        // Modal göster
+        document.getElementById('saveCardModal').style.display = 'flex';
+    }
+
+    function saveCardAndPay() {
+        var cardName = document.getElementById('cardName').value.trim();
+        var cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        var cardExpiry = document.getElementById('cardExpiry').value.trim();
+
+        var cards = JSON.parse(localStorage.getItem('daykast_cards') || '[]');
+        cards.push({
+            name: cardName,
+            number: cardNumber,
+            expiry: cardExpiry,
+            label: cardName
+        });
+        localStorage.setItem('daykast_cards', JSON.stringify(cards));
+
+        document.getElementById('saveCardModal').style.display = 'none';
+        executePlaceOrder();
+    }
+
+    function skipSaveAndPay() {
+        document.getElementById('saveCardModal').style.display = 'none';
+        executePlaceOrder();
+    }
+
+    function executePlaceOrder() {
         var btn = document.getElementById('btnPay');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İşleniyor...';
@@ -455,5 +358,24 @@
         xhr.send('cartData=' + encodeURIComponent(JSON.stringify(cart)) + '&totalAmount=' + total + '&__RequestVerificationToken=' + encodeURIComponent(token));
     }
 </script>
+
+<!-- KARTI KAYDET MODAL -->
+<div id="saveCardModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:16px; padding:36px 32px; max-width:420px; width:90%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:saveCardModalIn 0.3s ease;">
+        <div style="width:64px; height:64px; margin:0 auto 16px; background:linear-gradient(135deg,#eef2ff,#e0e7ff); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-credit-card" style="font-size:28px; color:#667eea;"></i>
+        </div>
+        <h3 style="margin:0 0 8px; font-size:18px; color:#333; font-weight:700;">Kartı Kaydetmek İster Misiniz?</h3>
+        <p style="margin:0 0 24px; font-size:14px; color:#888; line-height:1.6;">Kart bilgileriniz güvenli bir şekilde kaydedilerek gelecek alışverişlerinizde hızlıca ödeme yapabilirsiniz.</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button onclick="saveCardAndPay()" style="width:100%; padding:12px 24px; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.3s;">
+                <i class="fas fa-save"></i> Kartı Kaydet ve Öde
+            </button>
+            <button onclick="skipSaveAndPay()" style="width:100%; padding:12px 24px; background:#f8f9fa; color:#555; border:1px solid #e0e0e0; border-radius:10px; font-size:14px; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.3s;">
+                <i class="fas fa-arrow-right"></i> Kaydetmeden Devam Et
+            </button>
+        </div>
+    </div>
+</div> 
 
 @Html.AntiForgeryToken()

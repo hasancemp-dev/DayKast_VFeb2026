@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Security.Cryptography;
+using System.Text;
 using DayKast_VFeb2026.Models;
 
 namespace DayKast_VFeb2026.Controllers
@@ -14,6 +16,20 @@ namespace DayKast_VFeb2026.Controllers
     public class MembersController : Controller
     {
         DKEntities db = new DKEntities();
+
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
 
         // GET: Members
         public async Task<ActionResult> Index()
@@ -49,6 +65,11 @@ namespace DayKast_VFeb2026.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Şifreyi hashle
+                if (!string.IsNullOrEmpty(members.Password))
+                {
+                    members.Password = HashPassword(members.Password);
+                }
                 db.Members.Add(members);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -75,10 +96,34 @@ namespace DayKast_VFeb2026.Controllers
         // POST: Members/Edit/5 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "MemberID,FirstName,MiddleName,LastName,Email,Password,Birthday,Country,City,District,Address,CountryCode,Phone,MemberRole")] Members members)
+        public async Task<ActionResult> Edit([Bind(Include = "MemberID,FirstName,MiddleName,LastName,Email,Birthday,Country,City,District,Address,CountryCode,Phone,MemberRole")] Members members, string OldPassword, string NewPassword, string CurrentPasswordHash)
         {
             if (ModelState.IsValid)
             {
+                // Eski şifre doğrulaması
+                string oldPasswordHash = HashPassword(OldPassword);
+                if (oldPasswordHash != CurrentPasswordHash)
+                {
+                    ViewBag.PasswordError = "Eski şifre yanlış!";
+                    // Veritabanından güncel üye bilgilerini yükle
+                    var currentMember = await db.Members.AsNoTracking().FirstOrDefaultAsync(m => m.MemberID == members.MemberID);
+                    if (currentMember != null)
+                    {
+                        members.Password = currentMember.Password;
+                    }
+                    return View(members);
+                }
+
+                // Yeni şifre varsa hashle, yoksa eski şifreyi koru
+                if (!string.IsNullOrEmpty(NewPassword))
+                {
+                    members.Password = HashPassword(NewPassword);
+                }
+                else
+                {
+                    members.Password = CurrentPasswordHash;
+                }
+
                 db.Entry(members).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");

@@ -731,15 +731,54 @@ namespace DayKast_VFeb2026.Controllers
         // ============================================================
         public JsonResult GetFavoriteIds()
         {
+            try
+            {
+                if (Session["UserID"] == null)
+                {
+                    return Json(new { ids = new int[0] }, JsonRequestBehavior.AllowGet);
+                }
+                int memberId = Convert.ToInt32(Session["UserID"]);
+                var ids = db.Database.SqlQuery<int>(
+                    "SELECT ProductID FROM Favorites WHERE MemberID = @mid",
+                    new SqlParameter("@mid", memberId)).ToList();
+                return Json(new { ids = ids }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { ids = new int[0], error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        // ============================================================
+        // FAVORİLERİM SAYFASI
+        // ============================================================
+        public ActionResult MyFavorites()
+        {
             if (Session["UserID"] == null)
             {
-                return Json(new { ids = new int[0] }, JsonRequestBehavior.AllowGet);
+                return RedirectToAction("Login");
             }
+
             int memberId = Convert.ToInt32(Session["UserID"]);
-            var ids = db.Database.SqlQuery<int>(
-                "SELECT ProductID FROM Favorites WHERE MemberID = @mid",
+            var products = db.Database.SqlQuery<int>(
+                "SELECT ProductID FROM Favorites WHERE MemberID = @mid ORDER BY AddedDate DESC",
                 new SqlParameter("@mid", memberId)).ToList();
-            return Json(new { ids = ids }, JsonRequestBehavior.AllowGet);
+
+            var favProducts = new List<Products>();
+            foreach (var pid in products)
+            {
+                var product = db.Products
+                    .Include("Brands")
+                    .Include("Categories")
+                    .Include("ProductImages")
+                    .FirstOrDefault(p => p.ProductID == pid);
+                if (product != null)
+                {
+                    favProducts.Add(product);
+                }
+            }
+
+            return View(favProducts);
         }
 
         // ============================================================
