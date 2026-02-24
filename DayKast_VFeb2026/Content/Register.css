@@ -1,0 +1,187 @@
+ 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background: #f1f5f9;
+        }
+
+        .register-left {
+            flex: 0.8;
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 60px;
+        }
+
+        .register-left::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(circle at 80% 30%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 20% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            animation: float 6s ease-in-out infinite;
+        }
+        .floating-shape:nth-child(1) { width: 180px; height: 180px; top: -40px; left: -40px; animation-delay: 0s; }
+        .floating-shape:nth-child(2) { width: 120px; height: 120px; bottom: -20px; right: -20px; animation-delay: 3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        .register-left .brand {
+            position: relative; z-index: 1;
+            text-align: center;
+            color: white;
+        }
+
+        .register-left .brand-logo {
+            width: 80px; height: 80px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .register-left .brand h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 15px; }
+        .register-left .brand p { font-size: 1.1rem; opacity: 0.9; max-width: 350px; line-height: 1.7; }
+
+        .register-right {
+            flex: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .register-form-container {
+            width: 100%;
+            max-width: 550px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .register-form-header { margin-bottom: 30px; }
+        .register-form-header h2 { font-size: 2rem; font-weight: 700; color: #2d3748; margin-bottom: 8px; }
+        .register-form-header p { color: #718096; font-size: 1rem; }
+
+        .alert {
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-danger { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; }
+        .alert-success { background: #f0fff4; color: #22543d; border: 1px solid #9ae6b4; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; color: #4a5568; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+
+        .input-wrapper { position: relative; }
+
+        .input-icon {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 13px 13px 13px 42px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+        }
+
+        .form-control:focus ~ .input-icon { color: #667eea; }
+
+        select.form-control { padding-left: 42px; appearance: none; cursor: pointer; }
+
+        .btn-register {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(118,75,162,0.35);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(118,75,162,0.45);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #718096;
+            font-size: 0.95rem;
+        }
+
+        .login-link a {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .login-link a:hover { color: #764ba2; }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow-y: auto; }
+            .register-left { padding: 40px 20px 30px; min-height: auto; }
+            .register-left .brand h1 { font-size: 1.8rem; }
+            .register-right { padding: 30px 20px; }
+            .form-row { grid-template-columns: 1fr; }
+        } 

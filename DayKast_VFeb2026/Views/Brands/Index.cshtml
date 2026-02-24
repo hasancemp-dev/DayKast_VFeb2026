@@ -1,0 +1,86 @@
+﻿@model IEnumerable<DayKast_VFeb2026.Models.Brands>
+
+@{
+    ViewBag.Title = "Marka Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-building"></i> Marka Listesi</h3>
+        <a href="@Url.Action("Create")" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Yeni Marka Ekle
+        </a>
+    </div>
+    
+    @if (!string.IsNullOrEmpty(ViewBag.msj))
+    {
+        <div style="padding: 15px; margin: 15px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 6px; color: #155724;">
+            <i class="fas fa-check-circle"></i> @ViewBag.msj
+        </div>
+    }
+    
+    @if (Model != null && Model.Any())
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Marka ID</th>
+                    <th>Marka Adı</th>
+                    <th>Menşei</th>
+                    <th>Ürün Sayısı</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>#@item.BrandID</strong></td>
+                        <td>@item.BrandName</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Origin))
+                            {
+                                <span>@item.Origin</span>
+                            }
+                            else
+                            {
+                                <span style="color: #95a5a6;">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Products != null && item.Products.Any())
+                            {
+                                <span class="badge badge-info">@item.Products.Count() ürün</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">0 ürün</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="@Url.Action("Edit", new { id = item.BrandID })" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Düzenle
+                                </a>
+                                <a href="@Url.Action("Delete", new { id = item.BrandID })" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Sil
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="p-20 text-center">
+            <i class="fas fa-inbox" style="font-size: 48px; color: #bdc3c7; margin-bottom: 15px;"></i>
+            <p style="color: #7f8c8d;">Henüz marka bulunmamaktadır.</p>
+            <a href="@Url.Action("Create")" class="btn btn-success mt-20">
+                <i class="fas fa-plus-circle"></i> İlk Markayı Ekle
+            </a>
+        </div>
+    }
+</div>

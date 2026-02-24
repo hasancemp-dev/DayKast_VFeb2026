@@ -1,0 +1,811 @@
+@model DayKast_VFeb2026.Models.Products
+@{
+    ViewBag.Title = Model.ProductName + " - DayKast";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<style>
+    /* ====== ÜRÜN DETAY SAYFASI - TRENDYOL TARZI ====== */
+    .product-detail-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb-nav {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        color: #999;
+    }
+    .breadcrumb-nav a {
+        color: #666;
+        text-decoration: none;
+    }
+    .breadcrumb-nav a:hover {
+        color: #667eea;
+    }
+    .breadcrumb-nav .separator {
+        color: #ccc;
+    }
+    .breadcrumb-nav .current {
+        color: #333;
+        font-weight: 500;
+    }
+
+    /* Ana Layout: Sol resimler + Sağ bilgiler */
+    .product-detail-main {
+        display: flex;
+        gap: 40px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    /* ====== SOL - RESİM GALERİ ====== */
+    .product-gallery {
+        flex: 0 0 500px;
+        max-width: 500px;
+    }
+    .gallery-main-image {
+        width: 100%;
+        height: 500px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        border: 1px solid #eee;
+    }
+    .gallery-main-image img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    .gallery-main-image .no-image-icon {
+        font-size: 80px;
+        color: #ddd;
+    }
+    .gallery-thumbnails {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+    .gallery-thumb {
+        width: 72px;
+        height: 72px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid #e0e0e0;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+    .gallery-thumb:hover,
+    .gallery-thumb.active {
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102,126,234,0.3);
+    }
+    .gallery-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* ====== SAĞ - ÜRÜN BİLGİLERİ ====== */
+    .product-detail-info {
+        flex: 1;
+        min-width: 0;
+    }
+    .detail-brand {
+        font-size: 14px;
+        font-weight: 600;
+        color: #667eea;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+    }
+    .detail-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #333;
+        line-height: 1.3;
+        margin: 0 0 12px 0;
+    }
+    .detail-category-badge {
+        display: inline-block;
+        background: #f0f0ff;
+        color: #667eea;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 20px;
+    }
+    .detail-rating {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        color: #f39c12;
+        font-size: 14px;
+    }
+    .detail-divider {
+        height: 1px;
+        background: #f0f0f0;
+        margin: 16px 0;
+    }
+    /* Fiyat */
+    .detail-price-section {
+        background: #fafbff;
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin-bottom: 20px;
+    }
+    .detail-price {
+        font-size: 32px;
+        font-weight: 800;
+        color: #e74c3c;
+    }
+    .detail-price-suffix {
+        font-size: 14px;
+        color: #999;
+        margin-left: 4px;
+    }
+    /* Stok */
+    .detail-stock {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    .detail-stock.in-stock {
+        color: #27ae60;
+    }
+    .detail-stock.out-of-stock {
+        color: #e74c3c;
+    }
+    /* Sepete Ekle */
+    .detail-add-cart {
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    .detail-add-cart:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102,126,234,0.4);
+    }
+    .detail-add-cart:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    /* Ürün Bilgileri Tablosu */
+    .detail-specs {
+        margin-top: 20px;
+    }
+    .detail-specs h4 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 12px;
+    }
+    .spec-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .spec-table tr:nth-child(even) {
+        background: #fafafa;
+    }
+    .spec-table td {
+        padding: 10px 14px;
+        font-size: 13px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .spec-table td:first-child {
+        color: #888;
+        font-weight: 500;
+        width: 140px;
+    }
+    .spec-table td:last-child {
+        color: #333;
+    }
+
+    /* ====== ÜRÜN AÇIKLAMASI ====== */
+    .product-description-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .product-description-section h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 16px 0;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #667eea;
+        display: inline-block;
+    }
+    .product-description-section .desc-content {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #555;
+    }
+
+    /* ====== BENZER ÜRÜNLER ====== */
+    .related-products-section {
+        margin-top: 30px;
+    }
+    .related-products-section h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 16px;
+    }
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+    }
+    .related-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        transition: all 0.3s;
+        text-decoration: none;
+        color: inherit;
+    }
+    .related-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+    .related-card-img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .related-card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .related-card-img .no-img {
+        font-size: 40px;
+        color: #ddd;
+    }
+    .related-card-body {
+        padding: 10px 12px;
+    }
+    .related-card-body h5 {
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 4px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .related-card-body .related-price {
+        font-size: 15px;
+        font-weight: 700;
+        color: #e74c3c;
+    }
+
+    /* ====== RESPONSİVE ====== */
+    @@media (max-width: 768px) {
+        .product-detail-main {
+            flex-direction: column;
+        }
+        .product-gallery {
+            flex: none;
+            max-width: 100%;
+        }
+        .gallery-main-image {
+            height: 300px;
+        }
+    }
+</style>
+
+<!-- Breadcrumb -->
+<div class="product-detail-container">
+    <div class="breadcrumb-nav">
+        <a href="@Url.Action("Index", "Home")"><i class="fas fa-home"></i> Anasayfa</a>
+        <span class="separator">/</span>
+        @if (Model.Categories != null)
+        {
+            <a href="@Url.Action("Index", "Home", new { categoryId = Model.CategoryID })">@Model.Categories.CategoryName</a>
+            <span class="separator">/</span>
+        }
+        <span class="current">@Model.ProductName</span>
+    </div>
+
+    <!-- Ana Ürün Detayı -->
+    <div class="product-detail-main">
+        <!-- SOL: Resim Galerisi -->
+        <div class="product-gallery">
+            <div class="gallery-main-image" id="mainImage">
+                @if (Model.ProductImages != null && Model.ProductImages.Any())
+                {
+                    var cover = Model.ProductImages.FirstOrDefault(pi => pi.IsCoverImage == true) ?? Model.ProductImages.FirstOrDefault();
+                    if (cover != null)
+                    {
+                        <img src="@cover.ImagePath" alt="@Model.ProductName" id="mainImg" />
+                    }
+                    else
+                    {
+                        <i class="fas fa-box no-image-icon"></i>
+                    }
+                }
+                else
+                {
+                    <i class="fas fa-box no-image-icon"></i>
+                }
+            </div>
+
+            @if (Model.ProductImages != null && Model.ProductImages.Count() > 1)
+            {
+                <div class="gallery-thumbnails">
+                    @{ int idx = 0; }
+                    @foreach (var img in Model.ProductImages)
+                    {
+                        var isActive = (idx == 0 && (Model.ProductImages.FirstOrDefault(pi => pi.IsCoverImage == true) == img || Model.ProductImages.FirstOrDefault() == img));
+                        <div class="gallery-thumb @(isActive ? "active" : "")" onclick="changeMainImage(this, '@img.ImagePath')">
+                            <img src="@img.ImagePath" alt="Resim @(idx + 1)" />
+                        </div>
+                        idx++;
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- SAĞ: Ürün Bilgileri -->
+        <div class="product-detail-info">
+            @if (Model.Brands != null)
+            {
+                <div class="detail-brand">@Model.Brands.BrandName</div>
+            }
+            <h1 class="detail-title">@Model.ProductName</h1>
+
+            @if (Model.Categories != null)
+            {
+                <span class="detail-category-badge">
+                    <i class="fas fa-tag"></i> @Model.Categories.CategoryName
+                </span>
+            }
+
+            <div class="detail-divider"></div>
+
+            <!-- Fiyat -->
+            <div class="detail-price-section">
+                <span class="detail-price">₺@Model.SalePrice.ToString("N2")</span>
+            </div>
+
+            <!-- Stok -->
+            @if (Model.StockQuantity > 0)
+            {
+                <div class="detail-stock in-stock">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Stokta</strong> — @Model.StockQuantity adet mevcut
+                </div>
+            }
+            else
+            {
+                <div class="detail-stock out-of-stock">
+                    <i class="fas fa-times-circle"></i>
+                    <strong>Stokta yok</strong>
+                </div>
+            }
+
+            <!-- Sepete Ekle -->
+            @if (Model.StockQuantity > 0)
+            {
+                <button class="detail-add-cart"
+                        onclick="addToCart(@Model.ProductID, '@Html.Raw(Model.ProductName.Replace("'", "\\'"))', @Model.SalePrice.ToString(System.Globalization.CultureInfo.InvariantCulture), '@(Model.ProductImages != null && Model.ProductImages.Any() ? (Model.ProductImages.FirstOrDefault(pi => pi.IsCoverImage == true) ?? Model.ProductImages.FirstOrDefault()).ImagePath : "")', @Model.StockQuantity)">
+                    <i class="fas fa-cart-plus"></i> Sepete Ekle
+                </button>
+            }
+            else
+            {
+                <button class="detail-add-cart" disabled>
+                    <i class="fas fa-ban"></i> Tükendi
+                </button>
+            }
+
+            <!-- Ürün Bilgileri Tablosu -->
+            <div class="detail-specs">
+                <h4><i class="fas fa-info-circle"></i> Ürün Bilgileri</h4>
+                <table class="spec-table">
+                    @if (!string.IsNullOrEmpty(Model.StockCode))
+                    {
+                        <tr><td>Stok Kodu</td><td>@Model.StockCode</td></tr>
+                    }
+                    @if (Model.Categories != null)
+                    {
+                        <tr><td>Kategori</td><td>@Model.Categories.CategoryName</td></tr>
+                    }
+                    @if (Model.Brands != null)
+                    {
+                        <tr><td>Marka</td><td>@Model.Brands.BrandName</td></tr>
+                    }
+                    @if (Model.Suppliers != null)
+                    {
+                        <tr><td>Tedarikçi</td><td>@Model.Suppliers.CompanyName</td></tr>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Scale))
+                    {
+                        <tr><td>Ölçek</td><td>@Model.Scale</td></tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ürün Açıklaması -->
+    @if (!string.IsNullOrEmpty(Model.Description))
+    {
+        <div class="product-description-section">
+            <h3><i class="fas fa-align-left"></i> Ürün Açıklaması</h3>
+            <div class="desc-content">
+                @Html.Raw(Model.Description.Replace("\n", "<br/>"))
+            </div>
+        </div>
+    }
+
+    <!-- Benzer Ürünler -->
+    @if (ViewBag.RelatedProducts != null && ((List<DayKast_VFeb2026.Models.Products>)ViewBag.RelatedProducts).Count > 0)
+    {
+        <div class="related-products-section">
+            <h3><i class="fas fa-th-large"></i> Benzer Ürünler</h3>
+            <div class="related-grid">
+                @foreach (var rp in (List<DayKast_VFeb2026.Models.Products>)ViewBag.RelatedProducts)
+                {
+                    <a href="@Url.Action("ProductDetail", "Home", new { id = rp.ProductID })" class="related-card">
+                        <div class="related-card-img">
+                            @if (rp.ProductImages != null && rp.ProductImages.Any())
+                            {
+                                var rpCover = rp.ProductImages.FirstOrDefault(pi => pi.IsCoverImage == true) ?? rp.ProductImages.FirstOrDefault();
+                                if (rpCover != null)
+                                {
+                                    <img src="@rpCover.ImagePath" alt="@rp.ProductName" />
+                                }
+                                else
+                                {
+                                    <i class="fas fa-box no-img"></i>
+                                }
+                            }
+                            else
+                            {
+                                <i class="fas fa-box no-img"></i>
+                            }
+                        </div>
+                        <div class="related-card-body">
+                            <h5>@rp.ProductName</h5>
+                            <span class="related-price">₺@rp.SalePrice.ToString("N2")</span>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- ====== YORUM BÖLÜMÜ ====== -->
+    <div class="comments-section">
+        <div class="comments-header">
+            <h3><i class="fas fa-comments"></i> Değerlendirmeler</h3>
+            @{
+                var comments = ViewBag.Comments as List<DayKast_VFeb2026.Models.CommentViewModel>;
+                int commentCount = comments != null ? comments.Count : 0;
+                double avgRating = commentCount > 0 ? comments.Average(c => c.Rating) : 0;
+            }
+            <div class="comments-summary">
+                <div class="avg-rating">
+                    <span class="avg-score">@avgRating.ToString("0.0")</span>
+                    <div class="avg-stars">
+                        @for (int s = 1; s <= 5; s++)
+                        {
+                            if (s <= Math.Round(avgRating))
+                            {
+                                <i class="fas fa-star"></i>
+                            }
+                            else
+                            {
+                                <i class="far fa-star"></i>
+                            }
+                        }
+                    </div>
+                    <span class="comment-count">(@commentCount değerlendirme)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yorum Ekleme Formu -->
+        @if (Session["UserID"] != null)
+        {
+            <div class="comment-form-card">
+                <h4><i class="fas fa-pen"></i> Yorum Yaz</h4>
+                <div class="star-rating-input" id="starRatingInput">
+                    <span>Puanınız:</span>
+                    <div class="stars-input">
+                        @for (int s = 1; s <= 5; s++)
+                        {
+                            <i class="far fa-star star-pick" data-value="@s" onclick="setRating(@s)"></i>
+                        }
+                    </div>
+                    <span class="selected-rating" id="selectedRatingText"></span>
+                </div>
+                <textarea id="commentTextInput" placeholder="Bu ürün hakkında düşüncelerinizi yazın..." maxlength="1000" rows="4"></textarea>
+                <button class="btn-submit-comment" onclick="submitComment(@Model.ProductID)">
+                    <i class="fas fa-paper-plane"></i> Gönder
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="comment-login-prompt">
+                <i class="fas fa-lock"></i>
+                <span>Yorum yapmak için <a href="@Url.Action("Login", "Home")">giriş yapın</a>.</span>
+            </div>
+        }
+
+        <!-- Yorum Listesi -->
+        <div class="comments-list" id="commentsList">
+            @if (comments != null && comments.Any())
+            {
+                foreach (var c in comments)
+                {
+                    <div class="comment-item">
+                        <div class="comment-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="comment-body">
+                            <div class="comment-meta">
+                                <strong>@c.MemberName</strong>
+                                <span class="comment-date">@c.CommentDate.ToString("dd.MM.yyyy HH:mm")</span>
+                            </div>
+                            <div class="comment-stars">
+                                @for (int s = 1; s <= 5; s++)
+                                {
+                                    if (s <= c.Rating)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                }
+                            </div>
+                            <p class="comment-text">@c.CommentText</p>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-comments" id="noCommentsMsg">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>Henüz yorum yapılmamış. İlk yorumu siz yapın!</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* ====== YORUM BÖLÜMÜ STİLLERİ ====== */
+    .comments-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .comments-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .comments-header h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin: 0;
+    }
+    .comments-header h3 i { color: #667eea; margin-right: 8px; }
+    .comments-summary { display: flex; align-items: center; gap: 12px; }
+    .avg-rating { display: flex; align-items: center; gap: 8px; }
+    .avg-score { font-size: 28px; font-weight: 800; color: #f39c12; }
+    .avg-stars { display: flex; gap: 2px; color: #f39c12; font-size: 14px; }
+    .comment-count { font-size: 13px; color: #999; }
+
+    /* Yorum Formu */
+    .comment-form-card {
+        background: #fafbff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 24px;
+        border: 1px solid #e8ecf1;
+    }
+    .comment-form-card h4 {
+        font-size: 15px; font-weight: 700; color: #333; margin: 0 0 14px 0;
+    }
+    .comment-form-card h4 i { color: #667eea; margin-right: 6px; }
+    .star-rating-input {
+        display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+    }
+    .star-rating-input span { font-size: 14px; color: #666; font-weight: 500; }
+    .stars-input { display: flex; gap: 4px; }
+    .stars-input .star-pick {
+        font-size: 22px; color: #ddd; cursor: pointer; transition: all 0.2s;
+    }
+    .stars-input .star-pick:hover,
+    .stars-input .star-pick.active {
+        color: #f39c12; transform: scale(1.15);
+    }
+    .selected-rating { font-size: 13px; color: #f39c12; font-weight: 600; }
+
+    .comment-form-card textarea {
+        width: 100%; border: 1px solid #e0e0e0; border-radius: 8px;
+        padding: 12px 14px; font-size: 14px; font-family: inherit;
+        resize: vertical; transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+    .comment-form-card textarea:focus {
+        border-color: #667eea; outline: none; box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+    }
+    .btn-submit-comment {
+        margin-top: 12px; padding: 10px 24px; border: none; border-radius: 8px;
+        background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
+        font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-submit-comment:hover {
+        transform: translateY(-2px); box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    }
+
+    /* Giriş uyarısı */
+    .comment-login-prompt {
+        background: #fef9e7; border-radius: 8px; padding: 16px 20px;
+        margin-bottom: 24px; display: flex; align-items: center; gap: 10px;
+        font-size: 14px; color: #856404;
+    }
+    .comment-login-prompt a { color: #667eea; font-weight: 600; }
+
+    /* Yorum Listesi */
+    .comment-item {
+        display: flex; gap: 14px; padding: 18px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .comment-item:last-child { border-bottom: none; }
+    .comment-avatar {
+        font-size: 36px; color: #c0c5d0; flex-shrink: 0;
+    }
+    .comment-body { flex: 1; min-width: 0; }
+    .comment-meta {
+        display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+    }
+    .comment-meta strong { font-size: 14px; color: #333; }
+    .comment-date { font-size: 12px; color: #aaa; }
+    .comment-stars { display: flex; gap: 2px; margin-bottom: 8px; font-size: 13px; color: #f39c12; }
+    .comment-text { font-size: 14px; line-height: 1.6; color: #555; margin: 0; }
+
+    .no-comments {
+        text-align: center; padding: 40px 20px; color: #bbb;
+    }
+    .no-comments i { font-size: 40px; margin-bottom: 12px; display: block; }
+    .no-comments p { font-size: 14px; margin: 0; }
+</style>
+
+<script>
+    function changeMainImage(thumb, imagePath) {
+        var mainImg = document.getElementById('mainImg');
+        if (mainImg) {
+            mainImg.src = imagePath;
+        } else {
+            document.getElementById('mainImage').innerHTML = '<img src="' + imagePath + '" id="mainImg" alt="Ürün Resmi" />';
+        }
+        var thumbs = document.querySelectorAll('.gallery-thumb');
+        thumbs.forEach(function (t) { t.classList.remove('active'); });
+        thumb.classList.add('active');
+    }
+
+    // ====== YILDIZ PUANLAMA ======
+    var selectedRating = 0;
+
+    function setRating(value) {
+        selectedRating = value;
+        var stars = document.querySelectorAll('.star-pick');
+        stars.forEach(function(star) {
+            var sv = parseInt(star.getAttribute('data-value'));
+            if (sv <= value) {
+                star.className = 'fas fa-star star-pick active';
+            } else {
+                star.className = 'far fa-star star-pick';
+            }
+        });
+        var ratingTexts = ['', 'Çok Kötü', 'Kötü', 'Orta', 'İyi', 'Mükemmel'];
+        document.getElementById('selectedRatingText').textContent = ratingTexts[value];
+    }
+
+    // ====== YORUM GÖNDER ======
+    function submitComment(productId) {
+        var text = document.getElementById('commentTextInput').value.trim();
+        if (!text) { alert('Lütfen yorum yazın.'); return; }
+        if (selectedRating === 0) { alert('Lütfen bir puan seçin.'); return; }
+
+        $.ajax({
+            url: '/Home/AddComment',
+            type: 'POST',
+            data: { productId: productId, commentText: text, rating: selectedRating },
+            success: function(res) {
+                if (res.success) {
+                    // Boş mesajı kaldır
+                    var noMsg = document.getElementById('noCommentsMsg');
+                    if (noMsg) noMsg.remove();
+
+                    // Yeni yorumu en üste ekle
+                    var starsHtml = '';
+                    for (var i = 1; i <= 5; i++) {
+                        starsHtml += i <= res.comment.rating
+                            ? '<i class="fas fa-star"></i>'
+                            : '<i class="far fa-star"></i>';
+                    }
+
+                    var html = '<div class="comment-item" style="animation:fadeIn 0.4s ease">' +
+                        '<div class="comment-avatar"><i class="fas fa-user-circle"></i></div>' +
+                        '<div class="comment-body">' +
+                        '<div class="comment-meta"><strong>' + res.comment.memberName + '</strong>' +
+                        '<span class="comment-date">' + res.comment.date + '</span></div>' +
+                        '<div class="comment-stars">' + starsHtml + '</div>' +
+                        '<p class="comment-text">' + res.comment.text + '</p>' +
+                        '</div></div>';
+
+                    var list = document.getElementById('commentsList');
+                    list.insertAdjacentHTML('afterbegin', html);
+
+                    // Formu temizle
+                    document.getElementById('commentTextInput').value = '';
+                    selectedRating = 0;
+                    document.querySelectorAll('.star-pick').forEach(function(s) {
+                        s.className = 'far fa-star star-pick';
+                    });
+                    document.getElementById('selectedRatingText').textContent = '';
+                } else if (res.message === 'login_required') {
+                    window.location.href = '/Home/Login';
+                } else {
+                    alert(res.message);
+                }
+            }
+        });
+    }
+</script>

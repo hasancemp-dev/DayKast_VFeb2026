@@ -1,0 +1,108 @@
+@{
+    Layout = null;
+}
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/Login.css" rel="stylesheet" />
+<!DOCTYPE html>
+
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Girişi - DayKast</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🔐 Admin Girişi</h1>
+            <p>DayKast Yönetim Paneli</p>
+        </div>
+
+        <div class="login-card">
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>@ViewBag.ErrorMessage</span>
+                </div>
+            }
+
+            @if (ViewBag.SuccessMessage != null)
+            {
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span>@ViewBag.SuccessMessage</span>
+                </div>
+            }
+
+            @using (Html.BeginForm("Login", "Admin", FormMethod.Post, new { id = "loginForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label for="email">E-posta Adresi</label>
+                    <div class="input-wrapper">
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               class="form-control"
+                               placeholder="ornek@daykast.com"
+                               required
+                               autocomplete="email"
+                               autofocus />
+                        <i class="fas fa-envelope input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Şifre</label>
+                    <div class="input-wrapper">
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               class="form-control"
+                               placeholder="••••••••"
+                               required
+                               autocomplete="current-password" />
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    @*<input type="checkbox" id="rememberMe" name="rememberMe" />
+                    <label for="rememberMe">Beni Hatırla</label>*@
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span class="btn-text">
+                        Giriş Yap
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                </button>
+            }
+
+            <div class="forgot-password">
+                <a href="#">Şifremi Unuttum?</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form submit animasyonu
+        document.getElementById('loginForm').addEventListener('submit', function () {
+            var btn = document.getElementById('loginBtn');
+            btn.classList.add('loading');
+            btn.querySelector('.btn-text').innerHTML = 'Giriş yapılıyor...';
+        });
+
+        // Enter tuşu ile form submit
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').submit();
+            }
+        });
+    </script>
+</body>
+</html>

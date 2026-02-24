@@ -1,0 +1,165 @@
+@{
+    ViewBag.Title = "Sipariş Başarılı";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+@{
+    int orderId = ViewBag.OrderId;
+    int itemCount = ViewBag.ItemCount;
+    string orderNo = "#" + orderId.ToString("D5");
+    bool isSingle = (itemCount == 1);
+}
+
+<div class="success-page">
+    <div class="success-container">
+        <!-- YEŞİL TİK ANİMASYONU -->
+        <div class="success-checkmark">
+            <div class="check-circle">
+                <svg class="checkmark-svg" viewBox="0 0 52 52">
+                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- SİPARİŞ BİLGİLERİ -->
+        <h2 class="success-title">Ödeme Başarılı!</h2>
+        <div class="success-order-no">@orderNo</div>
+        <p class="success-message">
+            @if (isSingle)
+            {
+                @:Siparişiniz oluşturuldu. Ürününüz kargoya verilince gerekli bilgilendirme SMS ve e-mail yoluyla iletilecektir. Tercihiniz için teşekkür ederiz.
+            }
+            else
+            {
+                @:Siparişiniz oluşturuldu. Ürünleriniz kargoya verilince gerekli bilgilendirme SMS ve e-mail yoluyla iletilecektir. Tercihiniz için teşekkür ederiz.
+            }
+        </p>
+
+        <!-- GERİ SAYIM -->
+        <div class="success-countdown">
+            <i class="fas fa-home"></i>
+            <span id="countdownText">15 saniye içinde ana sayfaya yönlendirileceksiniz...</span>
+        </div>
+        <div class="countdown-bar-wrapper">
+            <div class="countdown-bar" id="countdownBar"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .success-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 200px);
+        padding: 40px 20px;
+    }
+    .success-container {
+        text-align: center;
+        max-width: 520px;
+        background: #fff;
+        border-radius: 20px;
+        padding: 50px 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        animation: fadeInUp 0.6s ease;
+    }
+
+    /* ===== TİK ANİMASYONU ===== */
+    .success-checkmark { margin-bottom: 24px; }
+    .check-circle { width: 100px; height: 100px; margin: 0 auto; }
+    .checkmark-svg { width: 100px; height: 100px; border-radius: 50%; display: block; }
+    .checkmark-circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #27ae60;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+    .checkmark-check {
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        stroke: #27ae60;
+        stroke-width: 3;
+        stroke-linecap: round;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+    }
+    .check-circle {
+        background: #f0faf4;
+        border-radius: 50%;
+        padding: 10px;
+    }
+    @@keyframes stroke {
+        100% { stroke-dashoffset: 0; }
+    }
+
+    /* ===== BİLGİLER ===== */
+    .success-title {
+        font-size: 28px;
+        color: #27ae60;
+        margin: 0 0 12px 0;
+        font-weight: 800;
+    }
+    .success-order-no {
+        font-size: 32px;
+        font-weight: 900;
+        color: #333;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+        letter-spacing: 2px;
+    }
+    .success-message {
+        font-size: 15px;
+        color: #666;
+        line-height: 1.7;
+        margin-bottom: 30px;
+    }
+
+    /* ===== GERİ SAYIM ===== */
+    .success-countdown {
+        font-size: 13px;
+        color: #999;
+        margin-bottom: 12px;
+    }
+    .success-countdown i { margin-right: 6px; }
+    .countdown-bar-wrapper {
+        background: #e8e8e8;
+        border-radius: 10px;
+        height: 6px;
+        overflow: hidden;
+    }
+    .countdown-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #27ae60, #2ecc71);
+        border-radius: 10px;
+        width: 100%;
+        animation: shrink 15s linear forwards;
+    }
+    @@keyframes shrink {
+        from { width: 100%; }
+        to { width: 0%; }
+    }
+    @@keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+    (function () {
+        var seconds = 15;
+        var countdownEl = document.getElementById('countdownText');
+        var interval = setInterval(function () {
+            seconds--;
+            if (seconds <= 0) {
+                clearInterval(interval);
+                window.location.href = '@Url.Action("Index", "Home")';
+            } else {
+                countdownEl.textContent = seconds + ' saniye içinde ana sayfaya yönlendirileceksiniz...';
+            }
+        }, 1000);
+    })();
+</script>

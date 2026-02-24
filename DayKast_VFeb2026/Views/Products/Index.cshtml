@@ -1,0 +1,96 @@
+﻿@model IEnumerable<DayKast_VFeb2026.Models.Products>
+
+@{
+    ViewBag.Title = "Ürün Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-box"></i> Ürün Listesi</h3>
+        <a href="@Url.Action("Create")" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Yeni Ürün Ekle
+        </a>
+    </div>
+    
+    @if (Model != null && Model.Any())
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Ürün Adı</th>
+                    <th>Stok Kodu</th>
+                    <th>Kategori</th>
+                    <th>Marka</th>
+                    <th>Tedarikçi</th>
+                    <th>Alış Fiyatı</th>
+                    <th>Satış Fiyatı</th>
+                    <th>Stok</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.ProductName</strong></td>
+                        <td>@item.StockCode</td>
+                        <td>@(item.Categories != null ? item.Categories.CategoryName : "-")</td>
+                        <td>@(item.Brands != null ? item.Brands.BrandName : "-")</td>
+                        <td>@(item.Suppliers != null ? item.Suppliers.CompanyName : "-")</td>
+                        <td>@(item.PurchasePrice != null ? ((decimal)item.PurchasePrice).ToString("C2") : "-")</td>
+                        <td><strong>@(item.SalePrice != null ? ((decimal)item.SalePrice).ToString("C2") : "-")</strong></td>
+                        <td>
+                            @if (item.StockQuantity < 10)
+                            {
+                                <span class="badge badge-danger">@item.StockQuantity</span>
+                            }
+                            else if (item.StockQuantity < 50)
+                            {
+                                <span class="badge badge-warning">@item.StockQuantity</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-success">@item.StockQuantity</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsActive == true)
+                            {
+                                <span class="badge badge-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">Pasif</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="@Url.Action("Edit", new { id = item.ProductID })" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="@Url.Action("Details", new { id = item.ProductID })" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="@Url.Action("Delete", new { id = item.ProductID })" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="p-20 text-center">
+            <i class="fas fa-inbox" style="font-size: 48px; color: #bdc3c7; margin-bottom: 15px;"></i>
+            <p style="color: #7f8c8d;">Henüz ürün bulunmamaktadır.</p>
+            <a href="@Url.Action("Create")" class="btn btn-success mt-20">
+                <i class="fas fa-plus-circle"></i> İlk Ürünü Ekle
+            </a>
+        </div>
+    }
+</div>

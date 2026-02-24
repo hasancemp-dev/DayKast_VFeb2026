@@ -1,0 +1,484 @@
+@Styles.Render("~/Content/css")
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - DayKast</title>
+    <link rel="icon" type="image/x-icon" href="@Url.Content("~/Content/Images/favicon.ico")" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Leckerli+One&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    @Styles.Render("~/Content/css")
+    @RenderSection("styles", required: false) 
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <!-- SOL: Hamburger + Logo -->
+        <div style="display:flex; align-items:center; gap:8px;">
+            <button class="nav-btn hamburger-btn" onclick="toggleLeftSidebar()" title="Menü">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="@Url.Action("Index", "Home")" class="navbar-brand">
+                <h1>DayKast</h1>
+            </a>
+        </div>
+
+        <!-- ORTA: Arama -->
+        <div class="navbar-search-wrapper">
+            <div class="navbar-search-box" id="navSearchBox">
+                <input type="text" id="navSearchInput" placeholder="Ürün ara..." autocomplete="off" />
+                <i class="fas fa-search" id="navSearchIcon"></i>
+            </div>
+            <div class="search-results-dropdown" id="searchResults"></div>
+        </div>
+
+        <!-- SAĞ: Sepet + Kullanıcı -->
+        <div class="navbar-actions">
+            @if (Session["UserID"] != null)
+            {
+                <button class="nav-btn" onclick="toggleCart()" title="Sepetim">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <a href="#" class="nav-btn fav-header-btn" title="Favorilerim" onclick="event.preventDefault();">
+                    <i class="fas fa-heart"></i>
+                    <span class="fav-badge" id="favBadge" style="display:none;">0</span>
+                </a>
+                <!-- Kullanıcı Dropdown -->
+                <div class="user-dropdown-wrapper">
+                    <button class="user-menu-btn" onclick="toggleUserDropdown()">
+                        <div class="user-avatar"><i class="fas fa-user"></i></div>
+                        <span>@Session["UserName"]</span>
+                        <i class="fas fa-chevron-down" style="font-size:0.7rem; opacity:0.6; margin-left:4px;"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="@Url.Action("MyAccount", "Home")"><i class="fas fa-user-circle"></i> Hesabım</a>
+                        <a href="@Url.Action("MyOrders", "Home")"><i class="fas fa-box"></i> Siparişlerim</a>
+                        <hr />
+                        <a href="@Url.Action("Logout", "Home")" class="logout-link"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+                    </div>
+                </div>
+
+                if (Session["UserRole"] != null && Session["UserRole"].ToString() == "1")
+                {
+                    <a href="@Url.Action("YonetimPaneli", "Admin")" title="Admin Panele Git" style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:0.9rem;text-decoration:none;transition:all 0.3s;box-shadow:0 3px 12px rgba(102,126,234,0.3);">
+                        <i class="fas fa-rotate"></i>
+                    </a>
+                }
+            }
+            else
+            {
+                <button class="nav-btn" onclick="toggleCart()" title="Sepetim">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <a href="@Url.Action("Login", "Home")" class="user-menu-btn">
+                    <div class="user-avatar"><i class="fas fa-user"></i></div>
+                    <span>Giriş Yap</span>
+                </a>
+                <a href="@Url.Action("Register", "Home")" class="btn-register-nav">
+                    <i class="fas fa-user-plus"></i> Kayıt Ol
+                </a>
+            }
+        </div>
+    </nav>
+
+    <!-- SOL SİDEBAR -->
+    <div class="left-sidebar-overlay" id="leftSidebarOverlay" onclick="toggleLeftSidebar()"></div>
+    <div class="left-sidebar" id="leftSidebar">
+        <div class="left-sidebar-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="brand-icon" style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.9rem;"><i class="fas fa-store"></i></div>
+                <strong style="font-size:1.1rem; color:#333;">DayKast</strong>
+            </div>
+            <button class="cart-close-btn" onclick="toggleLeftSidebar()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="left-sidebar-body">
+            <!-- KATEGORİLER -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title" onclick="toggleSidebarSection('catSection')">
+                    <span><i class="fas fa-th-large"></i> Kategoriler</span>
+                    <i class="fas fa-chevron-down sidebar-chevron" id="catSectionChevron"></i>
+                </div>
+                <div class="sidebar-section-content" id="catSection">
+                    @if (ViewBag.Categories != null)
+                    {
+                        var catIcons = new Dictionary<string, string> {
+                            {"Classic Cars", "fas fa-car-side"},
+                            {"Sports Cars", "fas fa-gauge-high"},
+                            {"Muscle Cars", "fas fa-car"},
+                            {"Trucks & Trailers", "fas fa-truck-moving"},
+                            {"Motorcycles", "fas fa-motorcycle"},
+                            {"Military Vehicles", "fas fa-shield-halved"},
+                            {"Aircrafts", "fas fa-jet-fighter"},
+                            {"Ships & Boats", "fas fa-ship"},
+                            {"Sci-Fi Vehicles", "fas fa-rocket"},
+                            {"Diorama Accessories", "fas fa-puzzle-piece"},
+                            {"Diorama", "fas fa-puzzle-piece"}
+                        };
+                        foreach (var cat in (List<DayKast_VFeb2026.Models.Categories>)ViewBag.Categories)
+                        {
+                            var iconClass = catIcons.ContainsKey(cat.CategoryName) ? catIcons[cat.CategoryName] : "fas fa-folder";
+                            <a href="@Url.Action("Index", "Home", new { categoryId = cat.CategoryID })"><i class="@iconClass"></i> @cat.CategoryName</a>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- KURUMSAL -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title" onclick="toggleSidebarSection('corpSection')">
+                    <span><i class="fas fa-building"></i> Kurumsal</span>
+                    <i class="fas fa-chevron-down sidebar-chevron" id="corpSectionChevron"></i>
+                </div>
+                <div class="sidebar-section-content" id="corpSection">
+                    <a href="@Url.Action("Contact", "Home")"><i class="fas fa-envelope"></i> İletişim</a>
+                    <a href="@Url.Action("Career", "Home")"><i class="fas fa-briefcase"></i> Kariyer</a>
+                    <a href="@Url.Action("About", "Home")"><i class="fas fa-info-circle"></i> Hakkımızda</a>
+                </div>
+            </div>
+
+            @if (Session["UserID"] != null)
+            {
+                <!-- HESABIM -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title" onclick="toggleSidebarSection('accountSection')">
+                        <span><i class="fas fa-user-circle"></i> Hesabım</span>
+                        <i class="fas fa-chevron-down sidebar-chevron" id="accountSectionChevron"></i>
+                    </div>
+                    <div class="sidebar-section-content" id="accountSection">
+                        <a href="@Url.Action("MyAccount", "Home")"><i class="fas fa-edit"></i> Profilim</a>
+                        <a href="@Url.Action("MyOrders", "Home")"><i class="fas fa-box"></i> Siparişlerim</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Session["UserID"] != null)
+        {
+            <div class="left-sidebar-footer">
+                <a href="@Url.Action("Logout", "Home")" class="sidebar-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- SIDEBAR SEPET -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-bag"></i> Sepetim</h3>
+            <button class="cart-close-btn" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty" id="cartEmpty">
+                <i class="fas fa-bag-shopping"></i>
+                <p>Sepetiniz boş</p>
+                <small>Alışverişe başlamak için ürünleri keşfedin</small>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display:none;">
+            <div class="cart-total">
+                <span>Toplam:</span>
+                <strong id="cartTotalPrice">₺0,00</strong>
+            </div>
+            <div class="cart-footer-buttons">
+                <button class="btn-clear-cart" onclick="clearCart()" title="Sepeti Boşalt">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button class="btn-checkout" onclick="goToCheckout()">
+                    <i class="fas fa-lock"></i> Siparişi Tamamla
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content">
+        @RenderBody()
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer" id="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>DayKast</h4>
+                <p>Modern e-ticaret deneyimi. Kaliteli ürünler, güvenli alışveriş.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Hızlı Erişim</h4>
+                <a href="@Url.Action("Index", "Home")">Ana Sayfa</a>
+                <a href="#products-section">Ürünler</a>
+                <a href="#categories-section">Kategoriler</a>
+            </div>
+            <div class="footer-col">
+                <h4>Hesabım</h4>
+                <a href="@Url.Action("Login", "Home")">Giriş Yap</a>
+                <a href="@Url.Action("Register", "Home")">Kayıt Ol</a>
+            </div>
+            <div class="footer-col">
+                <h4>İletişim</h4>
+                <a href="mailto:info@daykast.com"><i class="fas fa-envelope"></i> info@daykast.com</a>
+                <a href="tel:+900000000000"><i class="fas fa-phone"></i> +90 (000) 000 00 00</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 DayKast. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <!-- STOK UYARI MODAL -->
+    <div class="stock-modal-overlay" id="stockModalOverlay" onclick="closeStockModal()">
+        <div class="stock-modal" onclick="event.stopPropagation()">
+            <div class="stock-modal-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 id="stockModalTitle">Uyarı</h3>
+            <p id="stockModalMessage"></p>
+            <button class="stock-modal-btn" onclick="closeStockModal()">Tamam</button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // ========== NAVBAR SCROLL ==========
+        window.addEventListener('scroll', function () {
+            var navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        });
+
+        // ========== STOK MODAL ==========
+        function showStockModal(title, message) {
+            document.getElementById('stockModalTitle').textContent = title;
+            document.getElementById('stockModalMessage').textContent = message;
+            document.getElementById('stockModalOverlay').classList.add('active');
+        }
+
+        function closeStockModal() {
+            document.getElementById('stockModalOverlay').classList.remove('active');
+        }
+
+        // ========== SEPET SİSTEMİ ==========
+        var cart = JSON.parse(localStorage.getItem('daykast_cart') || '[]');
+        updateCartUI();
+
+        function toggleCart() {
+            document.getElementById('cartOverlay').classList.toggle('active');
+            document.getElementById('cartSidebar').classList.toggle('active');
+            document.body.style.overflow = document.getElementById('cartSidebar').classList.contains('active') ? 'hidden' : '';
+        }
+
+        function addToCart(productId, name, price, imageUrl, maxStock) {
+            // Stok kontrolü
+            if (!maxStock || maxStock <= 0) {
+                showStockModal('Stokta Yok', 'Bu ürün şu an stokta bulunmamaktadır.');
+                return;
+            }
+
+            var existing = cart.find(function(item) { return item.id === productId; });
+            if (existing) {
+                if (existing.qty >= maxStock) {
+                    showStockModal('Stok Limiti', 'Bu üründen en fazla ' + maxStock + ' adet ekleyebilirsiniz. Stok miktarı aşılamaz.');
+                    return;
+                }
+                existing.qty++;
+            } else {
+                cart.push({ id: productId, name: name, price: price, image: imageUrl, qty: 1, maxStock: maxStock });
+            }
+            localStorage.setItem('daykast_cart', JSON.stringify(cart));
+            updateCartUI();
+            toggleCart();
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(function(item) { return item.id !== productId; });
+            localStorage.setItem('daykast_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function changeQty(productId, delta) {
+            var item = cart.find(function(item) { return item.id === productId; });
+            if (item) {
+                var newQty = item.qty + delta;
+                if (newQty <= 0) {
+                    removeFromCart(productId);
+                    return;
+                }
+                if (newQty > item.maxStock) {
+                    showStockModal('Stok Limiti', item.name + ' ürününden en fazla ' + item.maxStock + ' adet ekleyebilirsiniz.');
+                    return;
+                }
+                item.qty = newQty;
+            }
+            localStorage.setItem('daykast_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            var badge = document.getElementById('cartBadge');
+            var itemsContainer = document.getElementById('cartItems');
+            var emptyMsg = document.getElementById('cartEmpty');
+            var footer = document.getElementById('cartFooter');
+            var totalEl = document.getElementById('cartTotalPrice');
+
+            var totalItems = cart.reduce(function(s, i) { return s + i.qty; }, 0);
+            var totalPrice = cart.reduce(function(s, i) { return s + (i.price * i.qty); }, 0);
+
+            if (badge) {
+                badge.textContent = totalItems;
+                badge.className = 'cart-badge' + (totalItems > 0 ? ' has-items' : '');
+            }
+
+            if (cart.length === 0) {
+                if (emptyMsg) emptyMsg.style.display = 'block';
+                if (footer) footer.style.display = 'none';
+                var existingItems = itemsContainer.querySelectorAll('.cart-item');
+                existingItems.forEach(function(el) { el.remove(); });
+            } else {
+                if (emptyMsg) emptyMsg.style.display = 'none';
+                if (footer) footer.style.display = 'block';
+
+                var existingItems = itemsContainer.querySelectorAll('.cart-item');
+                existingItems.forEach(function(el) { el.remove(); });
+
+                cart.forEach(function(item) {
+                    var div = document.createElement('div');
+                    div.className = 'cart-item';
+                    div.innerHTML =
+                        '<div class="cart-item-img"><i class="fas fa-box"></i></div>' +
+                        '<div class="cart-item-info">' +
+                            '<h4>' + item.name + '</h4>' +
+                            '<div class="cart-item-price">\u20BA' + (item.price * item.qty).toFixed(2) + '</div>' +
+                            '<div class="cart-item-qty">' +
+                                '<button class="qty-btn" onclick="changeQty(' + item.id + ', -1)">−</button>' +
+                                '<span>' + item.qty + '</span>' +
+                                '<button class="qty-btn" onclick="changeQty(' + item.id + ', 1)">+</button>' +
+                                '<span class="cart-item-remove" onclick="removeFromCart(' + item.id + ')"><i class="fas fa-trash-alt"></i></span>' +
+                            '</div>' +
+                        '</div>';
+                    itemsContainer.insertBefore(div, emptyMsg);
+                });
+            }
+
+            if (totalEl) totalEl.textContent = '\u20BA' + totalPrice.toFixed(2);
+        }
+
+        function goToCheckout() {
+            @if (Session["UserID"] == null)
+            {
+                @:window.location.href = '@Url.Action("Login", "Home")';
+                @:return;
+            }
+            if (cart.length === 0) {
+                alert('Sepetiniz boş.');
+                return;
+            }
+            toggleCart();
+            window.location.href = '@Url.Action("Checkout", "Home")';
+        }
+
+        // ========== SOL SİDEBAR ==========
+        function toggleLeftSidebar() {
+            document.getElementById('leftSidebar').classList.toggle('active');
+            document.getElementById('leftSidebarOverlay').classList.toggle('active');
+            document.body.style.overflow = document.getElementById('leftSidebar').classList.contains('active') ? 'hidden' : '';
+        }
+
+        // ========== SEPETİ BOŞALT ==========
+        function clearCart() {
+            if (cart.length === 0) return;
+            cart = [];
+            localStorage.removeItem('daykast_cart');
+            updateCartUI();
+        }
+
+        function toggleSidebarSection(sectionId) {
+            var content = document.getElementById(sectionId);
+            var chevron = document.getElementById(sectionId + 'Chevron');
+            content.classList.toggle('open');
+            if (chevron) chevron.classList.toggle('rotated');
+        }
+
+        // ========== USER DROPDOWN ==========
+        function toggleUserDropdown() {
+            var dd = document.getElementById('userDropdown');
+            if (dd) dd.classList.toggle('show');
+        }
+
+        // ========== NAVBAR ARAMA ==========
+        (function () {
+            var searchInput = document.getElementById('navSearchInput');
+            var searchBox = document.getElementById('navSearchBox');
+            var searchResults = document.getElementById('searchResults');
+            var debounceTimer;
+
+            if (!searchInput) return;
+
+            searchInput.addEventListener('focus', function () {
+                searchBox.classList.add('active');
+            });
+
+            searchInput.addEventListener('blur', function () {
+                setTimeout(function () {
+                    if (searchInput.value.trim() === '') {
+                        searchBox.classList.remove('active');
+                    }
+                    searchResults.classList.remove('show');
+                }, 200);
+            });
+
+            searchInput.addEventListener('input', function () {
+                var q = this.value.trim();
+                clearTimeout(debounceTimer);
+                if (q.length < 2) {
+                    searchResults.classList.remove('show');
+                    return;
+                }
+                debounceTimer = setTimeout(function () {
+                    $.getJSON('@Url.Action("SearchProducts", "Home")?q=' + encodeURIComponent(q), function (data) {
+                        searchResults.innerHTML = '';
+                        if (data.length === 0) {
+                            searchResults.innerHTML = '<div class="sr-empty"><i class="fas fa-search" style="display:block;font-size:1.5rem;margin-bottom:8px;color:#ccc;"></i>Sonuç bulunamadı</div>';
+                        } else {
+                            data.forEach(function (p) {
+                                searchResults.innerHTML += '<a href="/Home/ProductDetail/' + p.id + '">' +
+                                    '<div class="sr-icon"><i class="fas fa-box"></i></div>' +
+                                    '<div><div class="sr-name">' + p.name + '</div><div class="sr-price">₺' + p.price + '</div></div>' +
+                                    '</a>';
+                            });
+                        }
+                        searchResults.classList.add('show');
+                    });
+                }, 300);
+            });
+        })();
+
+        // Tıklama ile dropdown/arama kapat
+        document.addEventListener('click', function (e) {
+            var dd = document.getElementById('userDropdown');
+            if (dd && !e.target.closest('.user-dropdown-wrapper')) dd.classList.remove('show');
+        });
+
+        // Favori sayısını yükle
+        $(document).ready(function() {
+            $.get('/Home/GetFavoriteCount', function(res) {
+                var badge = document.getElementById('favBadge');
+                if (badge && res.count > 0) {
+                    badge.textContent = res.count;
+                    badge.style.display = 'flex';
+                }
+            });
+        });
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,922 @@
+/* ========================================
+   DayKast Admin Panel - Modern Styles
+   Türkçe Karakter Desteği ile
+   ======================================== */
+
+/* Reset ve Genel Ayarlar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8f9fa;
+    color: #2c3e50;
+    overflow-x: hidden;
+}
+
+/* Admin Layout Container */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ========================================
+   SIDEBAR NAVIGATION
+   ======================================== */
+.admin-sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    color: #ecf0f1;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.sidebar-header {
+    padding: 25px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+    text-align: center;
+}
+
+.sidebar-header .admin-badge {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: #3498db;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* Sidebar Menu */
+.sidebar-menu {
+    list-style: none;
+    padding: 15px 0;
+}
+
+.sidebar-menu li {
+    margin: 5px 0;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    color: #ecf0f1;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    font-size: 15px;
+}
+
+.sidebar-menu a:hover {
+    background: rgba(52, 152, 219, 0.2);
+    padding-left: 25px;
+}
+
+.sidebar-menu a.active {
+    background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+    border-left: 4px solid #fff;
+    font-weight: 600;
+}
+
+.sidebar-menu a i {
+    margin-right: 12px;
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+/* ========================================
+   MAIN CONTENT AREA
+   ======================================== */
+.admin-content {
+    margin-left: 260px;
+    flex: 1;
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+/* Top Header */
+.admin-header {
+    background: #fff;
+    padding: 20px 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.admin-header h1 {
+    font-size: 26px;
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0;
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-user-info span {
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.btn-logout {
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-logout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+}
+
+/* ========================================
+   DASHBOARD CARDS
+   ======================================== */
+.admin-main {
+    padding: 30px;
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #3498db 0%, #2980b9 100%);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card.primary::before {
+    background: linear-gradient(180deg, #3498db 0%, #2980b9 100%);
+}
+
+.stat-card.success::before {
+    background: linear-gradient(180deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.stat-card.warning::before {
+    background: linear-gradient(180deg, #f39c12 0%, #e67e22 100%);
+}
+
+.stat-card.danger::before {
+    background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.stat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.stat-card-title {
+    font-size: 14px;
+    color: #7f8c8d;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #fff;
+}
+
+.stat-card.primary .stat-card-icon {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.stat-card.success .stat-card-icon {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.stat-card.warning .stat-card-icon {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+.stat-card.danger .stat-card-icon {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.stat-card-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.stat-card-label {
+    font-size: 13px;
+    color: #95a5a6;
+}
+
+/* ========================================
+   TABLES
+   ======================================== */
+.admin-table-container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.table-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid #ecf0f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table-header h3 {
+    font-size: 18px;
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table thead {
+    background: #f8f9fa;
+}
+
+.admin-table th {
+    padding: 15px 20px;
+    text-align: left;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.admin-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #ecf0f1;
+    color: #34495e;
+    font-size: 14px;
+}
+
+.admin-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: #fff;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    color: #fff;
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: #fff;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+/* ========================================
+   FORMS
+   ======================================== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #dfe6e9;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* ========================================
+   BADGES
+   ======================================== */
+.badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge-info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        transform: translateX(-260px);
+    }
+
+    .admin-sidebar.active {
+        transform: translateX(0);
+    }
+
+    .admin-content {
+        margin-left: 0;
+    }
+
+    .admin-header {
+        padding: 15px 20px;
+    }
+
+    .admin-header h1 {
+        font-size: 20px;
+    }
+
+    .admin-main {
+        padding: 20px 15px;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .table-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .admin-table {
+        font-size: 12px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 10px;
+    }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+/* ========================================
+   UTILITIES
+   ======================================== */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.p-20 {
+    padding: 20px;
+}
+
+/* ========================================
+   CRUD FORM PAGES (Create, Edit)
+   ======================================== */
+
+/* Form card wrapper */
+.form-horizontal {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 35px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeIn 0.4s ease;
+}
+
+.form-horizontal h4 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-horizontal h4::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(180deg, #3498db, #2980b9);
+    border-radius: 2px;
+    display: inline-block;
+}
+
+.form-horizontal hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, #3498db33, #ecf0f1, transparent);
+    margin: 15px 0 25px;
+}
+
+/* Form groups */
+.form-horizontal .form-group {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 22px;
+    gap: 15px;
+}
+
+.form-horizontal .control-label {
+    font-weight: 600;
+    color: #34495e;
+    font-size: 14px;
+    padding-top: 10px;
+    min-width: 160px;
+    text-align: right;
+}
+
+.form-horizontal .form-control {
+    border: 2px solid #e8ecf1;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #fdfdfe;
+}
+
+.form-horizontal .form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+    background: #fff;
+}
+
+.form-horizontal select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 38px;
+}
+
+/* Submit buttons */
+.form-horizontal input[type="submit"],
+.form-horizontal button[type="submit"] {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.25);
+    letter-spacing: 0.3px;
+}
+
+.form-horizontal input[type="submit"]:hover,
+.form-horizontal button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.35);
+}
+
+.form-horizontal .btn-success {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.25);
+}
+
+.form-horizontal .btn-success:hover {
+    box-shadow: 0 6px 20px rgba(46, 204, 113, 0.35);
+}
+
+/* Checkbox styling */
+.form-horizontal .checkbox {
+    padding-top: 8px;
+}
+
+.form-horizontal .checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #3498db;
+    cursor: pointer;
+}
+
+/* Validation messages */
+.form-horizontal .text-danger {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+.form-horizontal .field-validation-error {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+    font-weight: 500;
+}
+
+/* Back to list link */
+.form-horizontal~div a,
+form~div a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    background: #f0f3f7;
+    color: #34495e;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.form-horizontal~div a:hover,
+form~div a:hover {
+    background: #e0e5ec;
+    color: #2c3e50;
+    transform: translateX(-3px);
+}
+
+.form-horizontal~div a::before,
+form~div a::before {
+    content: '\f053';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 12px;
+}
+
+/* ========================================
+   CRUD DELETE PAGES
+   ======================================== */
+h3 {
+    font-size: 20px;
+    color: #e74c3c;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Delete confirmation card */
+h3+div {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 30px 35px;
+    max-width: 700px;
+    border-left: 4px solid #e74c3c;
+    animation: fadeIn 0.4s ease;
+}
+
+h3+div h4 {
+    font-size: 18px;
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+h3+div hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, #e74c3c33, #ecf0f1, transparent);
+    margin: 10px 0 20px;
+}
+
+/* Definition list styling - table-like rows */
+.dl-horizontal {
+    display: grid !important;
+    grid-template-columns: 200px 1fr !important;
+    gap: 0 !important;
+    margin-bottom: 25px;
+    border: 1px solid #e8ecf1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.dl-horizontal dt {
+    font-weight: 700 !important;
+    color: #2c3e50 !important;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    padding: 12px 16px !important;
+    margin: 0 !important;
+    text-align: right;
+    background: #f8f9fb;
+    border-bottom: 1px solid #e8ecf1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.dl-horizontal dd {
+    color: #34495e;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 12px 16px;
+    margin: 0 !important;
+    border-bottom: 1px solid #f0f3f7;
+    display: flex;
+    align-items: center;
+}
+
+.dl-horizontal dt:last-of-type,
+.dl-horizontal dd:last-of-type {
+    border-bottom: none;
+}
+
+/* Delete form actions */
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #ecf0f1;
+}
+
+.form-actions input[type="submit"] {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.25);
+}
+
+.form-actions input[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.35);
+}
+
+.form-actions a {
+    color: #3498db;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.form-actions a:hover {
+    color: #2980b9;
+}
+
+/* ========================================
+   CRUD DETAILS PAGES
+   ======================================== */
+.details-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 30px 35px;
+    max-width: 800px;
+    animation: fadeIn 0.4s ease;
+}
+
+.details-card h4 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ========================================
+   ADMIN PAGE TITLE AREA
+   ======================================== */
+.admin-page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-page-title i {
+    color: #3498db;
+    font-size: 22px;
+}
+
+/* ========================================
+   GENERAL CRUD POLISH
+   ======================================== */
+
+/* Make .btn-default & .btn-light pretty */
+.btn-default,
+.btn-light {
+    background: #f0f3f7;
+    color: #34495e;
+    border: 1px solid #dfe6e9;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn-default:hover,
+.btn-light:hover {
+    background: #e0e5ec;
+    color: #2c3e50;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* col-md-offset fix for modern flexbox */
+.form-horizontal .col-md-offset-2 {
+    padding-left: 175px;
+}

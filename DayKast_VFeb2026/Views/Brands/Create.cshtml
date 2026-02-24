@@ -1,0 +1,42 @@
+﻿@model DayKast_VFeb2026.Models.Brands
+
+@{
+    ViewBag.Title = "Marka Ekle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Yeni Marka Ekle</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.BrandName, "Marka Adı", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.BrandName, new { htmlAttributes = new { @class = "form-control", placeholder = "Marka adını girin" } })
+                @Html.ValidationMessageFor(model => model.BrandName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Origin, "Menşei", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Origin, new { htmlAttributes = new { @class = "form-control", placeholder = "Ülke menşeini girin" } })
+                @Html.ValidationMessageFor(model => model.Origin, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Kaydet" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Tüm Liste", "Index")
+</div>

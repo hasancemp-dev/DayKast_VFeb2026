@@ -1,0 +1,372 @@
+@model List<DayKast_VFeb2026.Models.Orders>
+@{
+    ViewBag.Title = "Siparişlerim";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="orders-page">
+    <div class="orders-header">
+        <div>
+            <h1><i class="fas fa-box"></i> Siparişlerim</h1>
+            <p>Geçmiş ve güncel siparişlerinizi buradan takip edebilirsiniz</p>
+        </div>
+        <div class="orders-stats">
+            <div class="stat-pill">
+                <i class="fas fa-shopping-bag"></i>
+                <span>@Model.Count sipariş</span>
+            </div>
+            <div class="stat-pill active">
+                <i class="fas fa-clock"></i>
+                <span>@Model.Count(o => o.OrderStatus == "Beklemede") beklemede</span>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-orders">
+            <div class="empty-icon">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <h3>Henüz siparişiniz yok</h3>
+            <p>Alışverişe başlamak için ürünleri keşfedin</p>
+            <a href="@Url.Action("Index", "Home")" class="btn-shop">
+                <i class="fas fa-shopping-bag"></i> Alışverişe Başla
+            </a>
+        </div>
+    }
+    else
+    {
+        <!-- FİLTRE -->
+        <div class="orders-filter">
+            <button class="filter-btn active" onclick="filterOrders('all', this)">Tümü</button>
+            <button class="filter-btn" onclick="filterOrders('Beklemede', this)">Beklemede</button>
+            <button class="filter-btn" onclick="filterOrders('Hazırlanıyor', this)">Hazırlanıyor</button>
+            <button class="filter-btn" onclick="filterOrders('Kargoda', this)">Kargoda</button>
+            <button class="filter-btn" onclick="filterOrders('Teslim Edildi', this)">Teslim Edildi</button>
+            <button class="filter-btn" onclick="filterOrders('İptal Edildi', this)">İptal Edildi</button>
+        </div>
+
+        <!-- SİPARİŞ LİSTESİ -->
+        <div class="orders-list" id="ordersList">
+            @foreach (var order in Model)
+            {
+                var statusClass = "status-waiting";
+                var statusIcon = "fa-clock";
+                if (order.OrderStatus == "Hazırlanıyor") { statusClass = "status-preparing"; statusIcon = "fa-cog fa-spin"; }
+                else if (order.OrderStatus == "Kargoda") { statusClass = "status-shipping"; statusIcon = "fa-truck"; }
+                else if (order.OrderStatus == "Teslim Edildi") { statusClass = "status-delivered"; statusIcon = "fa-check-circle"; }
+                else if (order.OrderStatus == "İptal Edildi") { statusClass = "status-cancelled"; statusIcon = "fa-times-circle"; }
+
+                <div class="order-card" data-status="@order.OrderStatus">
+                    <!-- SİPARİŞ BAŞLIĞI -->
+                    <div class="order-card-header" onclick="toggleOrderDetails(@order.OrderID)">
+                        <div class="order-meta">
+                            <div class="order-id-badge">
+                                <i class="fas fa-hashtag"></i> @order.OrderID
+                            </div>
+                            <div class="order-info-text">
+                                <span class="order-date">
+                                    <i class="far fa-calendar-alt"></i> @order.OrderDate.ToString("dd MMMM yyyy, HH:mm", new System.Globalization.CultureInfo("tr-TR"))
+                                </span>
+                                <span class="order-item-count">
+                                    <i class="fas fa-cubes"></i> @order.OrderDetails.Count ürün
+                                </span>
+                            </div>
+                        </div>
+                        <div class="order-right-info">
+                            <div class="order-total-amount">₺@order.TotalAmount.ToString("N2")</div>
+                            <div class="order-status @statusClass">
+                                <i class="fas @statusIcon"></i> @order.OrderStatus
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down order-expand-icon" id="expandIcon_@order.OrderID"></i>
+                    </div>
+
+                    <!-- SİPARİŞ DETAYLARI -->
+                    <div class="order-details-panel" id="orderDetails_@order.OrderID" style="display:none;">
+                        @if (!string.IsNullOrEmpty(order.TrackingNumber))
+                        {
+                            <div class="tracking-info">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Kargo Takip No: <strong>@order.TrackingNumber</strong></span>
+                            </div>
+                        }
+
+                        <div class="order-items-list">
+                            @foreach (var detail in order.OrderDetails)
+                            {
+                                <div class="order-item-row">
+                                    <div class="order-item-icon">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                    <div class="order-item-info">
+                                        <h4>@(detail.Products != null ? detail.Products.ProductName : "Ürün #" + detail.ProductID)</h4>
+                                        <small>@detail.Quantity adet × ₺@detail.UnitPrice.ToString("N2")</small>
+                                    </div>
+                                    <div class="order-item-total">
+                                        ₺@((detail.Quantity * detail.UnitPrice).ToString("N2"))
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="order-details-footer">
+                            <div class="order-summary-row">
+                                <span>Toplam</span>
+                                <strong>₺@order.TotalAmount.ToString("N2")</strong>
+                            </div>
+                            @if (order.OrderStatus == "Beklemede")
+                            {
+                                <button class="btn-cancel-order" onclick="cancelOrder(@order.OrderID, event)">
+                                    <i class="fas fa-times"></i> Siparişi İptal Et
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- TOAST -->
+<div class="toast-notification" id="toastNotification">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage"></span>
+</div>
+
+@Html.AntiForgeryToken()
+
+<style>
+    .orders-page {
+        max-width: 900px; margin: 30px auto; padding: 0 20px;
+    }
+
+    /* BAŞLIK */
+    .orders-header {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        margin-bottom: 24px;
+    }
+    .orders-header h1 { margin: 0; font-size: 1.6rem; color: #333; }
+    .orders-header h1 i { margin-right: 10px; color: #667eea; }
+    .orders-header p { margin: 6px 0 0; font-size: 0.9rem; color: #888; }
+    .orders-stats { display: flex; gap: 10px; }
+    .stat-pill {
+        display: flex; align-items: center; gap: 6px;
+        padding: 8px 16px; border-radius: 20px;
+        background: #f0f2f5; font-size: 0.85rem; font-weight: 600; color: #666;
+    }
+    .stat-pill.active { background: #f5f3ff; color: #667eea; }
+
+    /* BOŞ DURUM */
+    .empty-orders {
+        text-align: center; padding: 80px 20px;
+        background: #fff; border-radius: 16px; box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+    }
+    .empty-icon {
+        width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 24px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.5rem; color: #fff; box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+    }
+    .empty-orders h3 { margin: 0 0 8px; font-size: 1.2rem; color: #333; }
+    .empty-orders p { margin: 0 0 24px; color: #888; }
+    .btn-shop {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 14px 28px; border-radius: 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff; text-decoration: none; font-weight: 700; font-size: 0.95rem;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.3); transition: all 0.3s;
+    }
+    .btn-shop:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(102,126,234,0.5); }
+
+    /* FİLTRE */
+    .orders-filter {
+        display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .filter-btn {
+        padding: 8px 18px; border: 2px solid #e8e8e8; border-radius: 20px;
+        background: #fff; font-size: 0.85rem; font-weight: 600; color: #666;
+        cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .filter-btn:hover { border-color: #667eea; color: #667eea; }
+    .filter-btn.active { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border-color: transparent; }
+
+    /* SİPARİŞ KARTLARI */
+    .orders-list { display: flex; flex-direction: column; gap: 14px; }
+    .order-card {
+        background: #fff; border-radius: 16px; overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+        border: 2px solid transparent; transition: all 0.2s;
+    }
+    .order-card:hover { border-color: #e8e8f0; }
+
+    .order-card-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 20px 24px; cursor: pointer; transition: background 0.2s;
+    }
+    .order-card-header:hover { background: #fafbff; }
+
+    .order-meta { display: flex; align-items: center; gap: 16px; }
+    .order-id-badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 6px 14px; border-radius: 8px;
+        background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
+        font-weight: 700; font-size: 0.9rem; color: #667eea;
+    }
+    .order-info-text { display: flex; flex-direction: column; gap: 4px; }
+    .order-date { font-size: 0.85rem; color: #666; }
+    .order-date i, .order-item-count i { margin-right: 4px; }
+    .order-item-count { font-size: 0.8rem; color: #999; }
+
+    .order-right-info { display: flex; align-items: center; gap: 16px; }
+    .order-total-amount { font-size: 1.1rem; font-weight: 700; color: #333; }
+
+    .order-status {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+    }
+    .status-waiting { background: #fef3c7; color: #d97706; }
+    .status-preparing { background: #dbeafe; color: #2563eb; }
+    .status-shipping { background: #ede9fe; color: #7c3aed; }
+    .status-delivered { background: #d1fae5; color: #059669; }
+    .status-cancelled { background: #fee2e2; color: #dc2626; }
+
+    .order-expand-icon {
+        color: #ccc; transition: transform 0.3s; font-size: 0.85rem;
+    }
+    .order-expand-icon.rotated { transform: rotate(180deg); color: #667eea; }
+
+    /* SİPARİŞ DETAY PANELİ */
+    .order-details-panel {
+        border-top: 1px solid #f0f0f0; padding: 20px 24px;
+        background: #fafbff; animation: fadeInTab 0.3s ease;
+    }
+    @@keyframes fadeInTab { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .tracking-info {
+        display: flex; align-items: center; gap: 8px;
+        padding: 12px 16px; background: #ede9fe; border-radius: 10px;
+        margin-bottom: 16px; font-size: 0.9rem; color: #7c3aed;
+    }
+
+    .order-items-list { display: flex; flex-direction: column; gap: 10px; }
+    .order-item-row {
+        display: flex; align-items: center; padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+    .order-item-row:last-child { border-bottom: none; }
+    .order-item-icon {
+        width: 42px; height: 42px; border-radius: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 0.9rem; margin-right: 14px; flex-shrink: 0;
+    }
+    .order-item-info { flex: 1; }
+    .order-item-info h4 { margin: 0; font-size: 0.9rem; color: #333; }
+    .order-item-info small { color: #888; font-size: 0.8rem; }
+    .order-item-total { font-weight: 700; color: #333; font-size: 0.95rem; white-space: nowrap; }
+
+    .order-details-footer {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-top: 16px; padding-top: 16px; border-top: 1px dashed #ddd;
+    }
+    .order-summary-row { font-size: 1rem; color: #555; }
+    .order-summary-row strong { color: #667eea; font-size: 1.1rem; margin-left: 8px; }
+
+    .btn-cancel-order {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 10px 20px; border: none; border-radius: 10px;
+        background: linear-gradient(135deg, #f56565, #e53e3e);
+        color: #fff; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+        transition: all 0.3s; font-family: 'Inter', sans-serif;
+        box-shadow: 0 3px 12px rgba(245,101,101,0.3);
+    }
+    .btn-cancel-order:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(245,101,101,0.4); }
+
+    /* TOAST */
+    .toast-notification {
+        position: fixed; bottom: 30px; right: 30px; background: #333; color: #fff;
+        padding: 16px 24px; border-radius: 12px; display: flex; align-items: center; gap: 10px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2); z-index: 9999;
+        transform: translateY(100px); opacity: 0; transition: all 0.4s ease;
+        font-size: 0.9rem; font-weight: 500;
+    }
+    .toast-notification.show { transform: translateY(0); opacity: 1; }
+    .toast-notification.success { background: #27ae60; }
+    .toast-notification.error { background: #e74c3c; }
+
+    /* RESPONSIVE */
+    @@media (max-width: 768px) {
+        .orders-header { flex-direction: column; gap: 12px; }
+        .order-card-header { flex-wrap: wrap; gap: 12px; }
+        .order-meta { flex-direction: column; align-items: flex-start; gap: 8px; }
+        .order-right-info { flex-direction: column; align-items: flex-end; gap: 6px; }
+    }
+</style>
+
+<script>
+    // ========== TOAST ==========
+    function showToast(message, type) {
+        var toast = document.getElementById('toastNotification');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-notification ' + (type || 'success') + ' show';
+        setTimeout(function () { toast.classList.remove('show'); }, 3000);
+    }
+
+    // ========== DETAY TOGGLE ==========
+    function toggleOrderDetails(orderId) {
+        var panel = document.getElementById('orderDetails_' + orderId);
+        var icon = document.getElementById('expandIcon_' + orderId);
+        if (panel.style.display === 'none') {
+            panel.style.display = 'block';
+            icon.classList.add('rotated');
+        } else {
+            panel.style.display = 'none';
+            icon.classList.remove('rotated');
+        }
+    }
+
+    // ========== FİLTRE ==========
+    function filterOrders(status, el) {
+        document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
+        el.classList.add('active');
+
+        document.querySelectorAll('.order-card').forEach(function (card) {
+            if (status === 'all' || card.dataset.status === status) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // ========== SİPARİŞ İPTAL ==========
+    function cancelOrder(orderId, event) {
+        event.stopPropagation();
+        if (!confirm('Bu siparişi iptal etmek istediğinizden emin misiniz?')) return;
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '@Url.Action("CancelOrder", "Home")', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    var res = JSON.parse(xhr.responseText);
+                    if (res.success) {
+                        showToast(res.message, 'success');
+                        setTimeout(function () { location.reload(); }, 1500);
+                    } else {
+                        showToast(res.message, 'error');
+                    }
+                } else {
+                    showToast('Sunucu hatası.', 'error');
+                }
+            }
+        };
+        xhr.send('orderId=' + orderId + '&__RequestVerificationToken=' + encodeURIComponent(token));
+    }
+</script>

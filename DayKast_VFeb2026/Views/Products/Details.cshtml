@@ -1,0 +1,56 @@
+﻿@model DayKast_VFeb2026.Models.Products
+
+@{
+    ViewBag.Title = "Ürün Detayı";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="details-card">
+    <h4><i class="fas fa-box-open" style="color:#3498db;"></i> Ürün Detayı</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Ürün Adı</dt>
+        <dd>@Html.DisplayFor(model => model.ProductName)</dd>
+
+        <dt>Stok Kodu</dt>
+        <dd>@Html.DisplayFor(model => model.StockCode)</dd>
+
+        <dt>Ölçek</dt>
+        <dd>@Html.DisplayFor(model => model.Scale)</dd>
+
+        <dt>Alış Fiyatı</dt>
+        <dd>@Html.DisplayFor(model => model.PurchasePrice) ₺</dd>
+
+        <dt>Satış Fiyatı</dt>
+        <dd>@Html.DisplayFor(model => model.SalePrice) ₺</dd>
+
+        <dt>Stok Miktarı</dt>
+        <dd>@Html.DisplayFor(model => model.StockQuantity)</dd>
+
+        <dt>Ürün Tipi</dt>
+        <dd>@Html.DisplayFor(model => model.ProductType)</dd>
+
+        <dt>Durum</dt>
+        <dd>@Html.DisplayFor(model => model.Condition)</dd>
+
+        <dt>Açıklama</dt>
+        <dd>@Html.DisplayFor(model => model.Description)</dd>
+
+        <dt>Aktif</dt>
+        <dd>@(Model.IsActive == true ? "Evet" : "Hayır")</dd>
+
+        <dt>Marka</dt>
+        <dd>@Html.DisplayFor(model => model.Brands.BrandName)</dd>
+
+        <dt>Kategori</dt>
+        <dd>@Html.DisplayFor(model => model.Categories.CategoryName)</dd>
+
+        <dt>Tedarikçi</dt>
+        <dd>@Html.DisplayFor(model => model.Suppliers.CompanyName)</dd>
+    </dl>
+</div>
+
+<div style="margin-top: 20px; display: flex; gap: 12px;">
+    @Html.ActionLink("Güncelle", "Edit", new { id = Model.ProductID }, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Tüm Liste", "Index", null, new { @class = "btn btn-default" })
+</div>

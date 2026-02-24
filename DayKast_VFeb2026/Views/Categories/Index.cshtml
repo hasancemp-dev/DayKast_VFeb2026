@@ -1,0 +1,68 @@
+﻿@model IEnumerable<DayKast_VFeb2026.Models.Categories>
+
+@{
+    ViewBag.Title = "Kategori Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-tags"></i> Kategori Listesi</h3>
+        <a href="@Url.Action("Create")" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Yeni Kategori Ekle
+        </a>
+    </div>
+    
+    @if (Model != null && Model.Any())
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Kategori ID</th>
+                    <th>Kategori Adı</th>
+                    <th>Ürün Sayısı</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>#@item.CategoryID</strong></td>
+                        <td>@item.CategoryName</td>
+                        <td>
+                            @if (item.Products != null && item.Products.Any())
+                            {
+                                <span class="badge badge-info">@item.Products.Count() ürün</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">0 ürün</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="@Url.Action("Edit", new { id = item.CategoryID })" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Düzenle
+                                </a>
+                                <a href="@Url.Action("Delete", new { id = item.CategoryID })" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Sil
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="p-20 text-center">
+            <i class="fas fa-inbox" style="font-size: 48px; color: #bdc3c7; margin-bottom: 15px;"></i>
+            <p style="color: #7f8c8d;">Henüz kategori bulunmamaktadır.</p>
+            <a href="@Url.Action("Create")" class="btn btn-success mt-20">
+                <i class="fas fa-plus-circle"></i> İlk Kategoriyi Ekle
+            </a>
+        </div>
+    }
+</div>

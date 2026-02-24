@@ -1,0 +1,321 @@
+﻿@model DayKast_VFeb2026.Models.Products
+
+@{
+    ViewBag.Title = "Ürün Düzenle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@using (Html.BeginForm("Edit", "Products", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Ürün Düzenle</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ProductID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StockCode, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StockCode, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StockCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CategoryID, "Kategori", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CategoryID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CategoryID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.BrandID, "Marka", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("BrandID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.BrandID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SupplierID, "Tedarikçi", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SupplierID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.SupplierID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Scale, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Scale, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Scale, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PurchasePrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PurchasePrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PurchasePrice, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SalePrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SalePrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SalePrice, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StockQuantity, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.StockQuantity, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StockQuantity, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductType, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProductType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Condition, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Condition, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Condition, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.IsActive)
+                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== MEVCUT RESİMLER ========== -->
+        <div class="form-group">
+            <label class="control-label col-md-2">Mevcut Resimler</label>
+            <div class="col-md-10">
+                <input type="hidden" id="deleteImageIds" name="deleteImageIds" value="" />
+                <input type="hidden" id="coverImageId" name="coverImageId" value="" />
+
+                @if (ViewBag.ExistingImages != null && ((List<DayKast_VFeb2026.Models.ProductImages>)ViewBag.ExistingImages).Count > 0)
+                {
+                    <div id="existingImagesContainer" style="display: flex; flex-wrap: wrap; gap: 12px;">
+                        @foreach (var img in (List<DayKast_VFeb2026.Models.ProductImages>)ViewBag.ExistingImages)
+                        {
+                            <div class="edit-img-card @(img.IsCoverImage == true ? "is-cover" : "")" data-id="@img.ImageID" id="imgCard_@img.ImageID">
+                                <div class="edit-img-cover-badge"><i class="fas fa-star"></i> Kapak</div>
+                                <img src="@img.ImagePath" alt="Ürün Resmi" />
+                                <div class="edit-img-actions">
+                                    <button type="button" class="btn-set-cover" onclick="setCoverImage(@img.ImageID)" title="Kapak resmi yap">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                    <button type="button" class="btn-delete-img" onclick="markForDelete(@img.ImageID)" title="Sil">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p style="color:#999; font-style:italic; margin-top:8px;">Bu ürüne ait resim bulunmamaktadır.</p>
+                }
+            </div>
+        </div>
+
+        <!-- ========== YENİ RESİM EKLEME ========== -->
+        <div class="form-group">
+            <label class="control-label col-md-2">Yeni Resim Ekle</label>
+            <div class="col-md-10">
+                <div style="border: 2px dashed #ccc; border-radius: 8px; padding: 20px; text-align: center; background: #f9f9f9; cursor: pointer;"
+                     onclick="document.getElementById('newImages').click()">
+                    <div id="newImagePreviews" style="display:none; margin-bottom:12px;">
+                        <div id="newImgPrevContainer" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>
+                    </div>
+                    <div id="newUploadPlaceholder">
+                        <i class="fas fa-plus-circle" style="font-size: 36px; color: #667eea; margin-bottom: 8px;"></i>
+                        <p style="margin: 0; color: #666; font-size: 14px;"><strong>Yeni resim eklemek için tıklayın</strong></p>
+                        <p style="margin: 4px 0 0; color: #999; font-size: 12px;">PNG, JPG, JPEG, GIF — Birden fazla seçebilirsiniz</p>
+                    </div>
+                </div>
+                <input type="file" id="newImages" name="newImages" multiple accept="image/*" style="display:none;" onchange="previewNewImages(this)" />
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top:10px;">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Güncelle" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Tüm Liste", "Index", null, new { @class = "btn btn-light" })
+</div>
+
+<style>
+    .edit-img-card {
+        position: relative;
+        width: 130px;
+        border: 3px solid #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+    .edit-img-card.is-cover {
+        border-color: #f39c12;
+        box-shadow: 0 3px 10px rgba(243,156,18,0.3);
+    }
+    .edit-img-card.marked-delete {
+        opacity: 0.35;
+        border-color: #e74c3c;
+    }
+    .edit-img-card img {
+        width: 100%;
+        height: 110px;
+        object-fit: cover;
+        display: block;
+    }
+    .edit-img-cover-badge {
+        display: none;
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        background: #f39c12;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 10px;
+    }
+    .edit-img-card.is-cover .edit-img-cover-badge {
+        display: block;
+    }
+    .edit-img-actions {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        padding: 6px;
+        background: #fafafa;
+        border-top: 1px solid #eee;
+    }
+    .btn-set-cover {
+        background: #fff;
+        border: 1px solid #f39c12;
+        color: #f39c12;
+        padding: 4px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.2s;
+    }
+    .btn-set-cover:hover {
+        background: #f39c12;
+        color: #fff;
+    }
+    .btn-delete-img {
+        background: #fff;
+        border: 1px solid #e74c3c;
+        color: #e74c3c;
+        padding: 4px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.2s;
+    }
+    .btn-delete-img:hover {
+        background: #e74c3c;
+        color: #fff;
+    }
+</style>
+
+<script>
+    var deleteIds = [];
+
+    function setCoverImage(imageId) {
+        document.getElementById('coverImageId').value = imageId;
+        // UI güncelle
+        var cards = document.querySelectorAll('.edit-img-card');
+        cards.forEach(function (c) { c.classList.remove('is-cover'); });
+        var card = document.getElementById('imgCard_' + imageId);
+        if (card) card.classList.add('is-cover');
+    }
+
+    function markForDelete(imageId) {
+        var card = document.getElementById('imgCard_' + imageId);
+        if (!card) return;
+
+        var idx = deleteIds.indexOf(imageId);
+        if (idx > -1) {
+            // Silme işlemini geri al
+            deleteIds.splice(idx, 1);
+            card.classList.remove('marked-delete');
+        } else {
+            // Silme için işaretle
+            deleteIds.push(imageId);
+            card.classList.add('marked-delete');
+        }
+        document.getElementById('deleteImageIds').value = deleteIds.join(',');
+    }
+
+    function previewNewImages(input) {
+        var container = document.getElementById('newImgPrevContainer');
+        var section = document.getElementById('newImagePreviews');
+        var placeholder = document.getElementById('newUploadPlaceholder');
+        container.innerHTML = '';
+
+        if (input.files && input.files.length > 0) {
+            section.style.display = 'block';
+            placeholder.innerHTML = '<p style="margin:0; color:#27ae60; font-size:13px;"><i class="fas fa-check-circle"></i> ' + input.files.length + ' yeni resim seçildi</p>';
+
+            for (var i = 0; i < input.files.length; i++) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var div = document.createElement('div');
+                    div.style.cssText = 'width:90px; height:90px; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.1);';
+                    div.innerHTML = '<img src="' + e.target.result + '" style="width:100%; height:100%; object-fit:cover;" />';
+                    container.appendChild(div);
+                };
+                reader.readAsDataURL(input.files[i]);
+            }
+        } else {
+            section.style.display = 'none';
+            placeholder.innerHTML = '<i class="fas fa-plus-circle" style="font-size:36px; color:#667eea; margin-bottom:8px;"></i>'
+                + '<p style="margin:0; color:#666; font-size:14px;"><strong>Yeni resim eklemek için tıklayın</strong></p>'
+                + '<p style="margin:4px 0 0; color:#999; font-size:12px;">PNG, JPG, JPEG, GIF — Birden fazla seçebilirsiniz</p>';
+        }
+    }
+</script>

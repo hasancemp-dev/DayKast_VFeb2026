@@ -1,0 +1,459 @@
+@{
+    ViewBag.Title = "Ödeme";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="checkout-page">
+    <!-- SOL: SİPARİŞ ÖZETİ -->
+    <div class="checkout-left">
+        <div class="checkout-card">
+            <h3><i class="fas fa-shopping-bag"></i> Sipariş Özeti</h3>
+            <div id="checkoutItems"></div>
+            <div class="checkout-summary">
+                <div class="summary-row">
+                    <span>Ara Toplam</span>
+                    <span id="subtotalPrice">₺0,00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Kargo</span>
+                    <span style="color:#27ae60;">Ücretsiz</span>
+                </div>
+                <hr />
+                <div class="summary-row total">
+                    <span>Toplam</span>
+                    <strong id="checkoutTotal">₺0,00</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SAĞ: ÖDEME FORMU -->
+    <div class="checkout-right">
+        <div class="checkout-card">
+            <h3><i class="fas fa-credit-card"></i> Kart Bilgileri</h3>
+            <!-- Kayıtlı Kartlar -->
+            <div id="savedCardsSection" style="display:none; margin-bottom:20px;">
+                <label style="display:block; font-size:13px; font-weight:700; color:#555; margin-bottom:10px;">
+                    <i class="fas fa-wallet" style="color:#667eea; margin-right:6px;"></i> Kayıtlı Kartlarım
+                </label>
+                <div id="savedCardsList" style="display:flex; flex-direction:column; gap:8px;"></div>
+                <label class="saved-card-option" style="margin-top:8px;" id="newCardOption">
+                    <input type="radio" name="savedCard" value="new" checked />
+                    <div class="sco-content">
+                        <div class="sco-icon" style="background:linear-gradient(135deg,#e8e8e8,#ccc);">
+                            <i class="fas fa-plus" style="color:#888;"></i>
+                        </div>
+                        <div class="sco-info">
+                            <span class="sco-label">Yeni Kart ile Öde</span>
+                            <span class="sco-detail">Kart bilgilerini manuel girin</span>
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Kart Görseli -->
+            <div class="credit-card-visual" id="cardVisual">
+                <div class="card-chip"></div>
+                <div class="card-number" id="cardDisplayNumber">•••• •••• •••• ••••</div>
+                <div class="card-bottom">
+                    <div>
+                        <small>KART SAHİBİ</small>
+                        <div id="cardDisplayName">AD SOYAD</div>
+                    </div>
+                    <div>
+                        <small>SON KUL. TARİHİ</small>
+                        <div id="cardDisplayExpiry">MM/YY</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kart Formu -->
+            <div class="card-form" id="cardFormFields">
+                <div class="form-group">
+                    <label>Kart Üzerindeki İsim</label>
+                    <input type="text" id="cardName" placeholder="Ad Soyad" maxlength="50" />
+                </div>
+                <div class="form-group">
+                    <label>Kart Numarası</label>
+                    <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Son Kullanma Tarihi</label>
+                        <input type="text" id="cardExpiry" placeholder="AA/YY" maxlength="5" />
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" id="cardCvv" placeholder="•••" maxlength="3" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAKSİT SEÇENEKLERİ -->
+        <div class="checkout-card">
+            <h3><i class="fas fa-list-ol"></i> Ödeme Seçenekleri</h3>
+            <div class="installment-options">
+                <label class="installment-option selected">
+                    <input type="radio" name="installment" value="1" checked />
+                    <div class="option-content">
+                        <span class="option-label">Peşin</span>
+                        <span class="option-price" id="installPrice1">₺0,00</span>
+                    </div>
+                </label>
+                <label class="installment-option">
+                    <input type="radio" name="installment" value="3" />
+                    <div class="option-content">
+                        <span class="option-label">3 Taksit</span>
+                        <span class="option-price" id="installPrice3">₺0,00 × 3</span>
+                    </div>
+                </label>
+                <label class="installment-option">
+                    <input type="radio" name="installment" value="6" />
+                    <div class="option-content">
+                        <span class="option-label">6 Taksit</span>
+                        <span class="option-price" id="installPrice6">₺0,00 × 6</span>
+                    </div>
+                </label>
+                <label class="installment-option">
+                    <input type="radio" name="installment" value="9" />
+                    <div class="option-content">
+                        <span class="option-label">9 Taksit</span>
+                        <span class="option-price" id="installPrice9">₺0,00 × 9</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- ÖDEME BUTONU -->
+        <button class="btn-pay" id="btnPay" onclick="placeOrder()">
+            <i class="fas fa-lock"></i> Ödemeyi Tamamla
+        </button>
+    </div>
+</div>
+
+<style>
+    .checkout-page {
+        display: flex;
+        gap: 30px;
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    .checkout-left { flex: 1; }
+    .checkout-right { flex: 1.2; }
+    .checkout-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 28px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+    }
+    .checkout-card h3 {
+        margin: 0 0 20px 0;
+        font-size: 18px;
+        color: #333;
+    }
+    .checkout-card h3 i { margin-right: 8px; color: #667eea; }
+
+    /* ÜRÜN LİSTESİ */
+    .checkout-item {
+        display: flex;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .checkout-item:last-child { border-bottom: none; }
+    .checkout-item-icon {
+        width: 50px; height: 50px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 20px;
+        margin-right: 14px; flex-shrink: 0;
+    }
+    .checkout-item-info { flex: 1; }
+    .checkout-item-info h4 { margin: 0; font-size: 14px; color: #333; }
+    .checkout-item-info small { color: #888; }
+    .checkout-item-price { font-weight: 700; color: #333; font-size: 15px; white-space: nowrap; }
+
+    /* ÖZET */
+    .checkout-summary { margin-top: 16px; }
+    .summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: #666; }
+    .summary-row.total { font-size: 18px; color: #333; }
+    .summary-row.total strong { color: #667eea; }
+    .checkout-summary hr { border: none; border-top: 1px dashed #e0e0e0; margin: 8px 0; }
+
+    /* KREDİ KARTI GÖRSELİ */
+    .credit-card-visual {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        padding: 28px 24px;
+        color: #fff;
+        margin-bottom: 24px;
+        position: relative;
+        height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.35);
+    }
+    .card-chip {
+        width: 44px; height: 32px;
+        background: linear-gradient(135deg, #f0c27f, #daa520);
+        border-radius: 6px;
+    }
+    .card-number { font-size: 22px; letter-spacing: 3px; font-weight: 500; }
+    .card-bottom { display: flex; justify-content: space-between; }
+    .card-bottom small { font-size: 10px; opacity: 0.7; display: block; margin-bottom: 2px; }
+    .card-bottom div:last-child { text-align: right; }
+
+    /* FORM */
+    .card-form .form-group { margin-bottom: 16px; }
+    .card-form label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; }
+    .card-form input {
+        width: 100%; padding: 12px 14px;
+        border: 2px solid #e8e8e8; border-radius: 10px;
+        font-size: 15px; transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+    .card-form input:focus { border-color: #667eea; outline: none; }
+    .form-row { display: flex; gap: 14px; }
+    .form-row .form-group { flex: 1; }
+
+    /* TAKSİT */
+    .installment-options { display: flex; flex-direction: column; gap: 8px; }
+    .installment-option {
+        display: flex; align-items: center; cursor: pointer;
+        padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 10px;
+        transition: all 0.25s;
+    }
+    .installment-option:hover { border-color: #c5cae9; }
+    .installment-option.selected { border-color: #667eea; background: #f5f3ff; }
+    .installment-option input { display: none; }
+    .option-content { display: flex; justify-content: space-between; width: 100%; }
+    .option-label { font-weight: 600; color: #333; }
+    .option-price { font-weight: 700; color: #667eea; }
+
+    /* ÖDEME BUTONU */
+    .btn-pay {
+        width: 100%; padding: 16px;
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        border: none; border-radius: 12px;
+        color: #fff; font-size: 17px; font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+    }
+    .btn-pay:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4); }
+    .btn-pay:active { transform: translateY(0); }
+    .btn-pay i { margin-right: 8px; }
+    .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* KAYITLI KART SEÇENEKLERİ */
+    .saved-card-option {
+        display: flex; align-items: center; cursor: pointer;
+        padding: 12px 14px; border: 2px solid #e8e8e8; border-radius: 12px;
+        transition: all 0.25s;
+    }
+    .saved-card-option:hover { border-color: #c5cae9; background: #fafbff; }
+    .saved-card-option.selected { border-color: #667eea; background: #f5f3ff; }
+    .saved-card-option input[type="radio"] { display: none; }
+    .sco-content { display: flex; align-items: center; gap: 12px; width: 100%; }
+    .sco-icon {
+        width: 40px; height: 40px; border-radius: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 0.95rem; flex-shrink: 0;
+    }
+    .sco-info { display: flex; flex-direction: column; }
+    .sco-label { font-weight: 600; font-size: 0.9rem; color: #333; }
+    .sco-detail { font-size: 0.8rem; color: #888; }
+
+    /* RESPONSIVE */
+    @@media (max-width: 768px) {
+        .checkout-page { flex-direction: column; }
+    }
+</style>
+
+<script>
+    (function () {
+        var cart = JSON.parse(localStorage.getItem('daykast_cart') || '[]');
+
+        if (cart.length === 0) {
+            window.location.href = '@Url.Action("Index", "Home")';
+            return;
+        }
+
+        var container = document.getElementById('checkoutItems');
+        var total = 0;
+
+        cart.forEach(function (item) {
+            var lineTotal = item.price * item.qty;
+            total += lineTotal;
+
+            var div = document.createElement('div');
+            div.className = 'checkout-item';
+            div.innerHTML =
+                '<div class="checkout-item-icon"><i class="fas fa-box"></i></div>' +
+                '<div class="checkout-item-info">' +
+                    '<h4>' + item.name + '</h4>' +
+                    '<small>' + item.qty + ' adet × ₺' + item.price.toFixed(2) + '</small>' +
+                '</div>' +
+                '<div class="checkout-item-price">₺' + lineTotal.toFixed(2) + '</div>';
+            container.appendChild(div);
+        });
+
+        document.getElementById('subtotalPrice').textContent = '₺' + total.toFixed(2);
+        document.getElementById('checkoutTotal').textContent = '₺' + total.toFixed(2);
+
+        // Taksit
+        document.getElementById('installPrice1').textContent = '₺' + total.toFixed(2);
+        document.getElementById('installPrice3').textContent = '₺' + (total / 3).toFixed(2) + ' × 3';
+        document.getElementById('installPrice6').textContent = '₺' + (total / 6).toFixed(2) + ' × 6';
+        document.getElementById('installPrice9').textContent = '₺' + (total / 9).toFixed(2) + ' × 9';
+
+        // Taksit seçim
+        document.querySelectorAll('.installment-option').forEach(function (opt) {
+            opt.addEventListener('click', function () {
+                document.querySelectorAll('.installment-option').forEach(function (o) { o.classList.remove('selected'); });
+                opt.classList.add('selected');
+                opt.querySelector('input').checked = true;
+            });
+        });
+
+        // Kart numarası formatlama ve görsel güncelleme
+        document.getElementById('cardNumber').addEventListener('input', function () {
+            var val = this.value.replace(/\D/g, '').substring(0, 16);
+            var formatted = val.replace(/(.{4})/g, '$1 ').trim();
+            this.value = formatted;
+            document.getElementById('cardDisplayNumber').textContent = formatted || '•••• •••• •••• ••••';
+        });
+
+        document.getElementById('cardName').addEventListener('input', function () {
+            document.getElementById('cardDisplayName').textContent = this.value.toUpperCase() || 'AD SOYAD';
+        });
+
+        document.getElementById('cardExpiry').addEventListener('input', function () {
+            var val = this.value.replace(/\D/g, '').substring(0, 4);
+            if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2);
+            this.value = val;
+            document.getElementById('cardDisplayExpiry').textContent = val || 'MM/YY';
+        });
+
+        document.getElementById('cardCvv').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').substring(0, 3);
+        });
+    })();
+
+    // ========== KAYITLI KARTLAR ==========
+    (function loadSavedCards() {
+        var cards = JSON.parse(localStorage.getItem('daykast_cards') || '[]');
+        if (cards.length === 0) return;
+
+        var section = document.getElementById('savedCardsSection');
+        var list = document.getElementById('savedCardsList');
+        section.style.display = 'block';
+
+        cards.forEach(function (card, idx) {
+            var masked = '**** **** **** ' + card.number.slice(-4);
+            var label = document.createElement('label');
+            label.className = 'saved-card-option';
+            label.innerHTML =
+                '<input type="radio" name="savedCard" value="' + idx + '" />' +
+                '<div class="sco-content">' +
+                    '<div class="sco-icon"><i class="fas fa-credit-card"></i></div>' +
+                    '<div class="sco-info">' +
+                        '<span class="sco-label">' + (card.label || card.name) + '</span>' +
+                        '<span class="sco-detail">' + masked + ' • ' + card.expiry + '</span>' +
+                    '</div>' +
+                '</div>';
+            list.appendChild(label);
+        });
+
+        // Kart seçim olayları
+        document.querySelectorAll('input[name="savedCard"]').forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                document.querySelectorAll('.saved-card-option').forEach(function (o) { o.classList.remove('selected'); });
+                this.closest('.saved-card-option').classList.add('selected');
+
+                var formFields = document.getElementById('cardFormFields');
+                if (this.value === 'new') {
+                    // Manuel giriş
+                    formFields.style.display = 'block';
+                    document.getElementById('cardName').value = '';
+                    document.getElementById('cardNumber').value = '';
+                    document.getElementById('cardExpiry').value = '';
+                    document.getElementById('cardCvv').value = '';
+                    document.getElementById('cardDisplayNumber').textContent = '•••• •••• •••• ••••';
+                    document.getElementById('cardDisplayName').textContent = 'AD SOYAD';
+                    document.getElementById('cardDisplayExpiry').textContent = 'MM/YY';
+                } else {
+                    // Kayıtlı kart seçildi
+                    var c = cards[parseInt(this.value)];
+                    var formatted = c.number.replace(/(.{4})/g, '$1 ').trim();
+                    document.getElementById('cardName').value = c.name;
+                    document.getElementById('cardNumber').value = formatted;
+                    document.getElementById('cardExpiry').value = c.expiry;
+                    document.getElementById('cardCvv').value = '';
+                    document.getElementById('cardDisplayNumber').textContent = formatted;
+                    document.getElementById('cardDisplayName').textContent = c.name.toUpperCase();
+                    document.getElementById('cardDisplayExpiry').textContent = c.expiry;
+                    // CVV hariç formu gizle, sadece CVV'yi göster
+                    formFields.style.display = 'block';
+                    document.getElementById('cardCvv').focus();
+                }
+            });
+        });
+
+        // Varsayılan olarak "Yeni Kart" seçili
+        document.getElementById('newCardOption').classList.add('selected');
+    })();
+
+    function placeOrder() {
+        var cardName = document.getElementById('cardName').value.trim();
+        var cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        var cardExpiry = document.getElementById('cardExpiry').value.trim();
+        var cardCvv = document.getElementById('cardCvv').value.trim();
+
+        if (!cardName || cardNumber.length < 16 || cardExpiry.length < 5 || cardCvv.length < 3) {
+            alert('Lütfen kart bilgilerini eksiksiz doldurunuz.');
+            return;
+        }
+
+        var btn = document.getElementById('btnPay');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İşleniyor...';
+
+        var cart = JSON.parse(localStorage.getItem('daykast_cart') || '[]');
+        var total = cart.reduce(function (s, i) { return s + (i.price * i.qty); }, 0);
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '@Url.Action("PlaceOrder", "Home")', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    var res = JSON.parse(xhr.responseText);
+                    if (res.success) {
+                        localStorage.removeItem('daykast_cart');
+                        window.location.href = '@Url.Action("OrderSuccess", "Home")?orderId=' + res.orderId + '&itemCount=' + res.itemCount;
+                    } else {
+                        alert(res.message || 'Bir hata oluştu.');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-lock"></i> Ödemeyi Tamamla';
+                    }
+                } else {
+                    alert('Sunucu hatası. Lütfen tekrar deneyiniz.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-lock"></i> Ödemeyi Tamamla';
+                }
+            }
+        };
+        xhr.send('cartData=' + encodeURIComponent(JSON.stringify(cart)) + '&totalAmount=' + total + '&__RequestVerificationToken=' + encodeURIComponent(token));
+    }
+</script>
+
+@Html.AntiForgeryToken()

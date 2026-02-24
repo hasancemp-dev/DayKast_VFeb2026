@@ -1,0 +1,218 @@
+@model DayKast_VFeb2026.Models.Orders
+
+@{
+    ViewBag.Title = "Sipariş Detayı #" + Model.OrderID;
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-receipt"></i> Sipariş Detayı #@Model.OrderID</h3>
+        <a href="@Url.Action("Index")" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Listeye Dön
+        </a>
+    </div>
+
+    <!-- SİPARİŞ BİLGİLERİ -->
+    <div class="detail-grid">
+        <div class="detail-card">
+            <div class="detail-card-header">
+                <i class="fas fa-info-circle"></i> Sipariş Bilgileri
+            </div>
+            <div class="detail-card-body">
+                <div class="detail-row">
+                    <span class="detail-label">Sipariş No</span>
+                    <span class="detail-value"><strong>#@Model.OrderID</strong></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Tarih</span>
+                    <span class="detail-value">@Model.OrderDate.ToString("dd MMMM yyyy, HH:mm", new System.Globalization.CultureInfo("tr-TR"))</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Durum</span>
+                    <span class="detail-value">
+                        @{
+                            string badgeClass = "badge-waiting";
+                            switch (Model.OrderStatus)
+                            {
+                                case "Hazırlanıyor": badgeClass = "badge-processing"; break;
+                                case "Kargoda": badgeClass = "badge-shipped"; break;
+                                case "Teslim Edildi": badgeClass = "badge-delivered"; break;
+                                case "İptal Edildi": badgeClass = "badge-cancelled"; break;
+                            }
+                        }
+                        <span class="order-status-badge @badgeClass">@Model.OrderStatus</span>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Takip No</span>
+                    <span class="detail-value">@(string.IsNullOrEmpty(Model.TrackingNumber) ? "—" : Model.TrackingNumber)</span>
+                </div>
+                <div class="detail-row total-row">
+                    <span class="detail-label">Toplam Tutar</span>
+                    <span class="detail-value total-amount">₺@Model.TotalAmount.ToString("N2")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-card-header">
+                <i class="fas fa-user"></i> Müşteri Bilgileri
+            </div>
+            <div class="detail-card-body">
+                @if (Model.Members != null)
+                {
+                    <div class="detail-row">
+                        <span class="detail-label">Ad Soyad</span>
+                        <span class="detail-value">@Model.Members.FirstName @Model.Members.LastName</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">E-posta</span>
+                        <span class="detail-value">@Model.Members.Email</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Telefon</span>
+                        <span class="detail-value">@(string.IsNullOrEmpty(Model.Members.Phone) ? "—" : Model.Members.Phone)</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Şehir / İlçe</span>
+                        <span class="detail-value">@Model.Members.City / @Model.Members.District</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Adres</span>
+                        <span class="detail-value">@(string.IsNullOrEmpty(Model.Members.Address) ? "—" : Model.Members.Address)</span>
+                    </div>
+                }
+                else
+                {
+                    <p style="color:#aaa; text-align:center; padding:20px;">Müşteri bilgisi bulunamadı.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- ÜRÜN DETAYLARI -->
+    <div class="detail-card" style="margin-top: 20px;">
+        <div class="detail-card-header">
+            <i class="fas fa-box"></i> Sipariş Kalemleri
+        </div>
+        <div class="detail-card-body" style="padding:0;">
+            <table class="detail-table">
+                <thead>
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th>Ürün Adı</th>
+                        <th style="text-align:center;">Adet</th>
+                        <th style="text-align:right;">Birim Fiyat</th>
+                        <th style="text-align:right;">Toplam</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+                    {
+                        int rowNum = 1;
+                        foreach (var detail in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td>@rowNum</td>
+                                <td>
+                                    @if (detail.Products != null)
+                                    {
+                                        <strong>@detail.Products.ProductName</strong>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#aaa;">Ürün #@detail.ProductID</span>
+                                    }
+                                </td>
+                                <td style="text-align:center;">@detail.Quantity</td>
+                                <td style="text-align:right;">₺@detail.UnitPrice.ToString("N2")</td>
+                                <td style="text-align:right;"><strong>₺@((detail.Quantity * detail.UnitPrice).ToString("N2"))</strong></td>
+                            </tr>
+                            rowNum++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" style="text-align:center; color:#aaa; padding:30px;">Sipariş kalemi bulunamadı.</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" style="text-align:right; font-weight:700; padding:14px 16px;">Genel Toplam</td>
+                        <td style="text-align:right; font-weight:700; font-size:1.1rem; color:#667eea; padding:14px 16px;">₺@Model.TotalAmount.ToString("N2")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-back {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 10px 20px; border-radius: 10px;
+        background: #f5f3ff; color: #667eea; font-weight: 600;
+        text-decoration: none; font-size: 0.9rem; transition: all 0.2s;
+    }
+    .btn-back:hover { background: #ede9fe; }
+
+    .detail-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+
+    .detail-card {
+        background: #fff; border-radius: 14px; overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+    .detail-card-header {
+        padding: 16px 20px; font-weight: 700; font-size: 0.95rem; color: #333;
+        background: #f9fafb; border-bottom: 1px solid #f0f0f0;
+    }
+    .detail-card-header i { margin-right: 8px; color: #667eea; }
+    .detail-card-body { padding: 20px; }
+
+    .detail-row {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 10px 0; border-bottom: 1px solid #f5f5f5;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { font-size: 0.85rem; color: #888; font-weight: 500; }
+    .detail-value { font-size: 0.9rem; color: #333; font-weight: 500; text-align: right; max-width: 60%; }
+
+    .total-row { padding-top: 14px; margin-top: 6px; border-top: 2px solid #f0f0f0; }
+    .total-amount { font-size: 1.15rem; font-weight: 800; color: #667eea; }
+
+    .order-status-badge {
+        display: inline-block; padding: 5px 14px; border-radius: 20px;
+        font-size: 0.8rem; font-weight: 700;
+    }
+    .badge-waiting { background: #fef3c7; color: #d97706; }
+    .badge-processing { background: #dbeafe; color: #2563eb; }
+    .badge-shipped { background: #ede9fe; color: #7c3aed; }
+    .badge-delivered { background: #d1fae5; color: #059669; }
+    .badge-cancelled { background: #fee2e2; color: #dc2626; }
+
+    .detail-table {
+        width: 100%; border-collapse: collapse;
+    }
+    .detail-table thead th {
+        padding: 12px 16px; font-size: 0.8rem; font-weight: 700; color: #888;
+        text-transform: uppercase; letter-spacing: 0.5px;
+        background: #f9fafb; border-bottom: 1px solid #f0f0f0; text-align: left;
+    }
+    .detail-table tbody td {
+        padding: 14px 16px; font-size: 0.9rem; color: #333;
+        border-bottom: 1px solid #f5f5f5;
+    }
+    .detail-table tbody tr:hover { background: #fafbff; }
+    .detail-table tfoot td {
+        border-top: 2px solid #f0f0f0;
+    }
+
+    @@media (max-width: 768px) {
+        .detail-grid { grid-template-columns: 1fr; }
+    }
+</style>

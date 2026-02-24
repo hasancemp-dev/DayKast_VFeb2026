@@ -1,0 +1,600 @@
+@model DayKast_VFeb2026.Models.Members
+@{
+    ViewBag.Title = "Hesabım";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="account-page">
+    <!-- SOL: MENÜ -->
+    <div class="account-sidebar">
+        <div class="account-avatar">
+            <div class="avatar-circle">
+                <i class="fas fa-user"></i>
+            </div>
+            <h3>@Model.FirstName @Model.LastName</h3>
+            <p>@Model.Email</p>
+        </div>
+        <nav class="account-nav">
+            <a href="javascript:void(0)" class="active" onclick="switchTab('profile', this)">
+                <i class="fas fa-user-edit"></i> Profil Bilgileri
+            </a>
+            <a href="javascript:void(0)" onclick="switchTab('cards', this)">
+                <i class="fas fa-credit-card"></i> Kredi Kartlarım
+            </a>
+            <a href="javascript:void(0)" onclick="switchTab('security', this)">
+                <i class="fas fa-shield-alt"></i> Güvenlik
+            </a>
+            <a href="@Url.Action("MyOrders", "Home")">
+                <i class="fas fa-box"></i> Siparişlerim
+            </a>
+        </nav>
+    </div>
+
+    <!-- SAĞ: İÇERİK -->
+    <div class="account-content">
+
+        <!-- PROFİL BİLGİLERİ -->
+        <div class="tab-content active" id="tab-profile">
+            <div class="account-card">
+                <div class="card-header-custom">
+                    <h3><i class="fas fa-user-edit"></i> Profil Bilgileri</h3>
+                    <span class="badge-info">Kişisel bilgilerinizi güncelleyebilirsiniz</span>
+                </div>
+                <div class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ad</label>
+                            <input type="text" id="firstName" value="@Model.FirstName" readonly style="background:#f0f2f5; color:#888; cursor:not-allowed;" />
+                        </div>
+                        <div class="form-group">
+                            <label>Soyad</label>
+                            <input type="text" id="lastName" value="@Model.LastName" readonly style="background:#f0f2f5; color:#888; cursor:not-allowed;" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>E-posta</label>
+                        <input type="email" id="email" value="@Model.Email" />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Telefon</label>
+                            <input type="text" id="phone" value="@Model.Phone" placeholder="+90 (___) ___ __ __" />
+                        </div>
+                        <div class="form-group">
+                            <label>Ülke</label>
+                            <input type="text" id="country" value="@Model.Country" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Şehir</label>
+                            <input type="text" id="city" value="@Model.City" />
+                        </div>
+                        <div class="form-group">
+                            <label>İlçe</label>
+                            <input type="text" id="district" value="@Model.District" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Adres</label>
+                        <textarea id="address" rows="3">@Model.Address</textarea>
+                    </div>
+                    <button class="btn-save" onclick="saveProfile()">
+                        <i class="fas fa-check"></i> Değişiklikleri Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- KREDİ KARTLARIM -->
+        <div class="tab-content" id="tab-cards">
+            <div class="account-card">
+                <div class="card-header-custom">
+                    <h3><i class="fas fa-credit-card"></i> Kredi Kartlarım</h3>
+                    <button class="btn-add-card" onclick="toggleNewCardForm()">
+                        <i class="fas fa-plus"></i> Yeni Kart Ekle
+                    </button>
+                </div>
+
+                <!-- YENİ KART FORMU -->
+                <div class="new-card-form" id="newCardForm" style="display:none;">
+                    <div class="mini-card-visual" id="miniCardVisual">
+                        <div class="mini-card-chip"></div>
+                        <div class="mini-card-number" id="miniCardNum">•••• •••• •••• ••••</div>
+                        <div class="mini-card-bottom">
+                            <div>
+                                <small>KART SAHİBİ</small>
+                                <div id="miniCardName">AD SOYAD</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <small>SON KUL.</small>
+                                <div id="miniCardExp">MM/YY</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex:2;">
+                            <label>Kart Üzerindeki İsim</label>
+                            <input type="text" id="newCardName" placeholder="Ad Soyad" maxlength="50" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Kart Numarası</label>
+                        <input type="text" id="newCardNumber" placeholder="0000 0000 0000 0000" maxlength="19" />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Son Kullanma Tarihi</label>
+                            <input type="text" id="newCardExpiry" placeholder="AA/YY" maxlength="5" />
+                        </div>
+                        <div class="form-group">
+                            <label>Kart Adı (opsiyonel)</label>
+                            <input type="text" id="newCardLabel" placeholder="ör: Ziraat Kartım" maxlength="30" />
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-save" onclick="saveCard()">
+                            <i class="fas fa-save"></i> Kartı Kaydet
+                        </button>
+                        <button class="btn-cancel" onclick="toggleNewCardForm()">İptal</button>
+                    </div>
+                </div>
+
+                <!-- KAYITLI KARTLAR -->
+                <div id="savedCards" class="saved-cards-list">
+                    <!-- JS ile doldurulacak -->
+                </div>
+                <div id="noCards" class="empty-state" style="display:none;">
+                    <i class="fas fa-credit-card"></i>
+                    <p>Henüz kayıtlı kartınız yok</p>
+                    <small>Hızlı ödeme için kart ekleyebilirsiniz</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- GÜVENLİK -->
+        <div class="tab-content" id="tab-security">
+            <div class="account-card">
+                <div class="card-header-custom">
+                    <h3><i class="fas fa-shield-alt"></i> Güvenlik</h3>
+                    <span class="badge-info">Şifrenizi değiştirin</span>
+                </div>
+                <div class="profile-form">
+                    <div class="form-group">
+                        <label>Eski Şifre</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="oldPassword" placeholder="Mevcut şifreniz" />
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('oldPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Yeni Şifre</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="newPassword" placeholder="Yeni şifreniz (min 6 karakter)" />
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('newPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Yeni Şifre Tekrar</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="confirmPassword" placeholder="Yeni şifrenizi tekrarlayın" />
+                            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirmPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn-save" onclick="changePassword()">
+                        <i class="fas fa-key"></i> Şifreyi Değiştir
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- TOAST BİLDİRİM -->
+<div class="toast-notification" id="toastNotification">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage"></span>
+</div>
+
+@Html.AntiForgeryToken()
+
+<style>
+    .account-page {
+        display: flex; gap: 30px; max-width: 1200px; margin: 30px auto; padding: 0 20px; min-height: 70vh;
+    }
+
+    /* SOL MENÜ */
+    .account-sidebar {
+        width: 280px; flex-shrink: 0;
+    }
+    .account-avatar {
+        background: #fff; border-radius: 16px; padding: 30px; text-align: center;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06); margin-bottom: 16px;
+    }
+    .avatar-circle {
+        width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 2rem;
+        box-shadow: 0 6px 20px rgba(102,126,234,0.3);
+    }
+    .account-avatar h3 { margin: 0; font-size: 1.1rem; color: #333; }
+    .account-avatar p { margin: 4px 0 0; font-size: 0.85rem; color: #888; }
+    .account-nav {
+        background: #fff; border-radius: 16px; overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+    }
+    .account-nav a {
+        display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+        color: #555; text-decoration: none; font-size: 0.95rem; font-weight: 500;
+        border-bottom: 1px solid #f0f0f0; transition: all 0.2s;
+    }
+    .account-nav a:last-child { border-bottom: none; }
+    .account-nav a:hover { background: #f5f3ff; color: #667eea; }
+    .account-nav a.active { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+    .account-nav a.active i { color: #fff; }
+    .account-nav a i { width: 20px; text-align: center; color: #667eea; }
+
+    /* SAĞ İÇERİK */
+    .account-content { flex: 1; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeInTab 0.3s ease; }
+    @@keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .account-card {
+        background: #fff; border-radius: 16px; padding: 28px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06); margin-bottom: 20px;
+    }
+    .card-header-custom {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0;
+    }
+    .card-header-custom h3 { margin: 0; font-size: 1.1rem; color: #333; }
+    .card-header-custom h3 i { margin-right: 8px; color: #667eea; }
+    .badge-info {
+        background: #f5f3ff; color: #667eea; padding: 6px 14px;
+        border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+    }
+
+    /* FORM */
+    .profile-form .form-group { margin-bottom: 18px; }
+    .profile-form label {
+        display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 6px;
+    }
+    .profile-form input, .profile-form textarea {
+        width: 100%; padding: 12px 14px; border: 2px solid #e8e8e8; border-radius: 10px;
+        font-size: 0.95rem; transition: border-color 0.3s; box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+    }
+    .profile-form input:focus, .profile-form textarea:focus { border-color: #667eea; outline: none; }
+    .profile-form textarea { resize: vertical; }
+    .form-row { display: flex; gap: 16px; }
+    .form-row .form-group { flex: 1; }
+
+    .password-input-wrapper {
+        position: relative; display: flex; align-items: center;
+    }
+    .password-input-wrapper input { padding-right: 44px; }
+    .toggle-password {
+        position: absolute; right: 12px; background: none; border: none;
+        color: #888; cursor: pointer; font-size: 0.9rem; padding: 4px;
+    }
+    .toggle-password:hover { color: #667eea; }
+
+    .btn-save {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 14px 28px; border: none; border-radius: 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+        transition: all 0.3s; font-family: 'Inter', sans-serif;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(102,126,234,0.5); }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-cancel {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 14px 28px; border: 2px solid #e8e8e8; border-radius: 12px;
+        background: #fff; color: #666; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+        transition: all 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .btn-cancel:hover { border-color: #ccc; background: #f9f9f9; }
+
+    .form-actions { display: flex; gap: 12px; margin-top: 6px; }
+
+    /* KREDİ KARTI EKLE */
+    .btn-add-card {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 8px 18px; border: 2px dashed #667eea; border-radius: 10px;
+        background: transparent; color: #667eea; font-size: 0.85rem; font-weight: 700;
+        cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .btn-add-card:hover { background: #f5f3ff; }
+
+    .new-card-form {
+        background: #fafbff; border-radius: 14px; padding: 24px; margin-bottom: 20px;
+        border: 1px solid #e8e8f0;
+    }
+
+    /* MİNİ KART GÖRSELİ */
+    .mini-card-visual {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 14px; padding: 20px; color: #fff; margin-bottom: 20px;
+        max-width: 340px; box-shadow: 0 6px 20px rgba(102,126,234,0.3);
+    }
+    .mini-card-chip { width: 36px; height: 26px; background: linear-gradient(135deg, #f0c27f, #daa520); border-radius: 4px; margin-bottom: 14px; }
+    .mini-card-number { font-size: 1.1rem; letter-spacing: 2px; font-weight: 500; margin-bottom: 14px; }
+    .mini-card-bottom { display: flex; justify-content: space-between; font-size: 0.8rem; }
+    .mini-card-bottom small { opacity: 0.7; display: block; margin-bottom: 2px; font-size: 0.65rem; }
+
+    /* KAYITLI KARTLAR */
+    .saved-cards-list { display: flex; flex-direction: column; gap: 12px; }
+    .saved-card-item {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 20px; border: 2px solid #e8e8f0; border-radius: 14px;
+        transition: all 0.2s;
+    }
+    .saved-card-item:hover { border-color: #667eea; background: #fafbff; }
+    .saved-card-left { display: flex; align-items: center; gap: 16px; }
+    .saved-card-icon {
+        width: 48px; height: 48px; border-radius: 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 1.2rem;
+    }
+    .saved-card-info h4 { margin: 0; font-size: 0.95rem; color: #333; }
+    .saved-card-info p { margin: 2px 0 0; font-size: 0.8rem; color: #888; }
+    .btn-delete-card {
+        width: 36px; height: 36px; border-radius: 10px; border: none;
+        background: #fee2e2; color: #ef4444; font-size: 0.85rem;
+        cursor: pointer; transition: all 0.2s;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .btn-delete-card:hover { background: #fecaca; }
+
+    /* BOŞ DURUM */
+    .empty-state {
+        text-align: center; padding: 40px; color: #999;
+    }
+    .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; opacity: 0.3; }
+    .empty-state p { margin: 0; font-weight: 600; font-size: 0.95rem; }
+    .empty-state small { font-size: 0.85rem; }
+
+    /* TOAST */
+    .toast-notification {
+        position: fixed; bottom: 30px; right: 30px; background: #333; color: #fff;
+        padding: 16px 24px; border-radius: 12px; display: flex; align-items: center; gap: 10px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2); z-index: 9999;
+        transform: translateY(100px); opacity: 0; transition: all 0.4s ease;
+        font-size: 0.9rem; font-weight: 500;
+    }
+    .toast-notification.show { transform: translateY(0); opacity: 1; }
+    .toast-notification.success { background: #27ae60; }
+    .toast-notification.error { background: #e74c3c; }
+
+    /* RESPONSIVE */
+    @@media (max-width: 768px) {
+        .account-page { flex-direction: column; }
+        .account-sidebar { width: 100%; }
+        .form-row { flex-direction: column; gap: 0; }
+    }
+</style>
+
+<script>
+    // ========== TAB GEÇİŞ ==========
+    function switchTab(tabId, el) {
+        document.querySelectorAll('.tab-content').forEach(function (t) { t.classList.remove('active'); });
+        document.querySelectorAll('.account-nav a').forEach(function (a) { a.classList.remove('active'); });
+        document.getElementById('tab-' + tabId).classList.add('active');
+        if (el) el.classList.add('active');
+        return false;
+    }
+
+    // ========== TOAST BİLDİRİM ==========
+    function showToast(message, type) {
+        var toast = document.getElementById('toastNotification');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-notification ' + (type || 'success') + ' show';
+        setTimeout(function () { toast.classList.remove('show'); }, 3000);
+    }
+
+    // ========== PROFİL KAYDET ==========
+    function saveProfile() {
+        var btn = event.target.closest('button');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...';
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '@Url.Action("UpdateProfile", "Home")', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> Değişiklikleri Kaydet';
+                if (xhr.status === 200) {
+                    var res = JSON.parse(xhr.responseText);
+                    showToast(res.message, res.success ? 'success' : 'error');
+                } else {
+                    showToast('Sunucu hatası.', 'error');
+                }
+            }
+        };
+        var data = 'Email=' + encodeURIComponent(document.getElementById('email').value)
+            + '&Phone=' + encodeURIComponent(document.getElementById('phone').value)
+            + '&Country=' + encodeURIComponent(document.getElementById('country').value)
+            + '&City=' + encodeURIComponent(document.getElementById('city').value)
+            + '&District=' + encodeURIComponent(document.getElementById('district').value)
+            + '&Address=' + encodeURIComponent(document.getElementById('address').value)
+            + '&__RequestVerificationToken=' + encodeURIComponent(token);
+        xhr.send(data);
+    }
+
+    // ========== ŞİFRE DEĞİŞTİR ==========
+    function changePassword() {
+        var oldPwd = document.getElementById('oldPassword').value;
+        var newPwd = document.getElementById('newPassword').value;
+        var confirmPwd = document.getElementById('confirmPassword').value;
+
+        if (!oldPwd) { showToast('Lütfen eski şifrenizi girin.', 'error'); return; }
+        if (newPwd.length < 6) { showToast('Yeni şifre en az 6 karakter olmalıdır.', 'error'); return; }
+        if (newPwd !== confirmPwd) { showToast('Yeni şifreler eşleşmiyor.', 'error'); return; }
+
+        var btn = event.target.closest('button');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...';
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '@Url.Action("UpdateProfile", "Home")', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-key"></i> Şifreyi Değiştir';
+                if (xhr.status === 200) {
+                    var res = JSON.parse(xhr.responseText);
+                    showToast(res.message, res.success ? 'success' : 'error');
+                    if (res.success) {
+                        document.getElementById('oldPassword').value = '';
+                        document.getElementById('newPassword').value = '';
+                        document.getElementById('confirmPassword').value = '';
+                    }
+                } else { showToast('Sunucu hatası.', 'error'); }
+            }
+        };
+        var data = 'Email=' + encodeURIComponent(document.getElementById('email').value)
+            + '&Phone=' + encodeURIComponent(document.getElementById('phone').value)
+            + '&Country=' + encodeURIComponent(document.getElementById('country').value)
+            + '&City=' + encodeURIComponent(document.getElementById('city').value)
+            + '&District=' + encodeURIComponent(document.getElementById('district').value)
+            + '&Address=' + encodeURIComponent(document.getElementById('address').value)
+            + '&OldPassword=' + encodeURIComponent(oldPwd)
+            + '&NewPassword=' + encodeURIComponent(newPwd)
+            + '&__RequestVerificationToken=' + encodeURIComponent(token);
+        xhr.send(data);
+    }
+
+    // ========== ŞİFRE GÖSTER/GİZLE ==========
+    function togglePasswordVisibility(inputId, btn) {
+        var input = document.getElementById(inputId);
+        var icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'fas fa-eye-slash';
+        } else {
+            input.type = 'password';
+            icon.className = 'fas fa-eye';
+        }
+    }
+
+    // ========== KREDİ KART YÖNETİMİ (localStorage) ==========
+    var savedCards = JSON.parse(localStorage.getItem('daykast_cards') || '[]');
+
+    function renderCards() {
+        var container = document.getElementById('savedCards');
+        var noCards = document.getElementById('noCards');
+        container.innerHTML = '';
+
+        if (savedCards.length === 0) {
+            noCards.style.display = 'block';
+            return;
+        }
+        noCards.style.display = 'none';
+
+        savedCards.forEach(function (card, index) {
+            var masked = '**** **** **** ' + card.number.slice(-4);
+            var div = document.createElement('div');
+            div.className = 'saved-card-item';
+            div.innerHTML =
+                '<div class="saved-card-left">' +
+                    '<div class="saved-card-icon"><i class="fas fa-credit-card"></i></div>' +
+                    '<div class="saved-card-info">' +
+                        '<h4>' + (card.label || card.name) + '</h4>' +
+                        '<p>' + masked + ' • ' + card.expiry + '</p>' +
+                    '</div>' +
+                '</div>' +
+                '<button class="btn-delete-card" onclick="deleteCard(' + index + ')" title="Kartı Sil">' +
+                    '<i class="fas fa-trash-alt"></i>' +
+                '</button>';
+            container.appendChild(div);
+        });
+    }
+
+    function toggleNewCardForm() {
+        var form = document.getElementById('newCardForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function saveCard() {
+        var name = document.getElementById('newCardName').value.trim();
+        var number = document.getElementById('newCardNumber').value.replace(/\s/g, '');
+        var expiry = document.getElementById('newCardExpiry').value.trim();
+        var label = document.getElementById('newCardLabel').value.trim();
+
+        if (!name || number.length < 16 || expiry.length < 5) {
+            showToast('Lütfen kart bilgilerini eksiksiz doldurun.', 'error');
+            return;
+        }
+
+        savedCards.push({ name: name, number: number, expiry: expiry, label: label || name });
+        localStorage.setItem('daykast_cards', JSON.stringify(savedCards));
+        renderCards();
+        toggleNewCardForm();
+        // Formu sıfırla
+        document.getElementById('newCardName').value = '';
+        document.getElementById('newCardNumber').value = '';
+        document.getElementById('newCardExpiry').value = '';
+        document.getElementById('newCardLabel').value = '';
+        document.getElementById('miniCardNum').textContent = '•••• •••• •••• ••••';
+        document.getElementById('miniCardName').textContent = 'AD SOYAD';
+        document.getElementById('miniCardExp').textContent = 'MM/YY';
+        showToast('Kart başarıyla kaydedildi.', 'success');
+    }
+
+    function deleteCard(index) {
+        if (!confirm('Bu kartı silmek istediğinizden emin misiniz?')) return;
+        savedCards.splice(index, 1);
+        localStorage.setItem('daykast_cards', JSON.stringify(savedCards));
+        renderCards();
+        showToast('Kart silindi.', 'success');
+    }
+
+    // Kart numarası formatlama
+    document.addEventListener('DOMContentLoaded', function () {
+        renderCards();
+
+        var numInput = document.getElementById('newCardNumber');
+        if (numInput) {
+            numInput.addEventListener('input', function () {
+                var val = this.value.replace(/\D/g, '').substring(0, 16);
+                this.value = val.replace(/(.{4})/g, '$1 ').trim();
+                document.getElementById('miniCardNum').textContent = this.value || '•••• •••• •••• ••••';
+            });
+        }
+        var nameInput = document.getElementById('newCardName');
+        if (nameInput) {
+            nameInput.addEventListener('input', function () {
+                document.getElementById('miniCardName').textContent = this.value.toUpperCase() || 'AD SOYAD';
+            });
+        }
+        var expInput = document.getElementById('newCardExpiry');
+        if (expInput) {
+            expInput.addEventListener('input', function () {
+                var val = this.value.replace(/\D/g, '').substring(0, 4);
+                if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2);
+                this.value = val;
+                document.getElementById('miniCardExp').textContent = val || 'MM/YY';
+            });
+        }
+    });
+</script>

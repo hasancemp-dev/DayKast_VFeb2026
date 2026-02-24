@@ -1,0 +1,220 @@
+@{
+    ViewBag.Title = "İletişim";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="page-hero">
+    <div class="page-hero-content">
+        <h1><i class="fas fa-envelope"></i> İletişim</h1>
+        <p>Bizimle iletişime geçmekten çekinmeyin</p>
+    </div>
+</section>
+
+<div class="contact-page">
+    <div class="contact-grid">
+        <!-- SOL: FORM -->
+        <div class="contact-card">
+            <div class="contact-card-header">
+                <h3><i class="fas fa-paper-plane"></i> Bize Mesaj Gönderin</h3>
+                <span class="badge-info">Tüm alanları doldurunuz</span>
+            </div>
+            <div class="contact-form">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Ad Soyad</label>
+                    <input type="text" id="contactName" placeholder="Adınız ve soyadınız" maxlength="100" />
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-at"></i> E-posta Adresi</label>
+                    <input type="email" id="contactEmail" placeholder="ornek@email.com" maxlength="200" />
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-comment-dots"></i> Mesajınız</label>
+                    <textarea id="contactMessage" rows="6" placeholder="Mesajınızı buraya yazın..."></textarea>
+                </div>
+                <button class="btn-send" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i> Mesajı Gönder
+                </button>
+            </div>
+        </div>
+
+        <!-- SAĞ: İLETİŞİM BİLGİLERİ -->
+        <div class="contact-info-side">
+            <div class="contact-info-card">
+                <div class="info-icon phone-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <div class="info-content">
+                    <h4>Telefon</h4>
+                    <p>+90 (224) 555 00 00</p>
+                    <span>Pazartesi - Cuma: 09:00 - 18:00</span>
+                </div>
+            </div>
+
+            <div class="contact-info-card">
+                <div class="info-icon email-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="info-content">
+                    <h4>E-posta</h4>
+                    <p>info@daykast.com</p>
+                    <span>7/24 yanıt veriyoruz</span>
+                </div>
+            </div>
+
+            <div class="contact-info-card address-card">
+                <div class="info-icon address-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="info-content">
+                    <h4>Adres</h4>
+                    <p>Güneştepe Mah. 700. Sok. No:12/3</p>
+                    <p>16165 Osmangazi / Bursa</p>
+                    <span>Türkiye</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST BİLDİRİM -->
+<div class="toast-notification" id="toastNotification">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage"></span>
+</div>
+
+<style>
+    /* PAGE HERO */
+    .page-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 50px 20px; text-align: center; color: #fff;
+        margin-bottom: 0;
+    }
+    .page-hero h1 {
+        font-size: 2rem; font-weight: 800; margin: 0 0 8px;
+    }
+    .page-hero h1 i { margin-right: 10px; }
+    .page-hero p { margin: 0; opacity: 0.85; font-size: 1.05rem; }
+
+    /* CONTACT PAGE */
+    .contact-page {
+        max-width: 1100px; margin: -30px auto 40px; padding: 0 20px;
+    }
+    .contact-grid {
+        display: grid; grid-template-columns: 1.3fr 1fr; gap: 28px;
+    }
+
+    .contact-card {
+        background: #fff; border-radius: 16px; padding: 28px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    }
+    .contact-card-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0;
+    }
+    .contact-card-header h3 { margin: 0; font-size: 1.1rem; color: #333; }
+    .contact-card-header h3 i { margin-right: 8px; color: #667eea; }
+    .badge-info {
+        background: #f5f3ff; color: #667eea; padding: 6px 14px;
+        border-radius: 20px; font-size: 0.78rem; font-weight: 600;
+    }
+
+    .contact-form .form-group { margin-bottom: 18px; }
+    .contact-form label {
+        display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 6px;
+    }
+    .contact-form label i { margin-right: 6px; color: #667eea; font-size: 0.8rem; }
+    .contact-form input, .contact-form textarea {
+        width: 100%; padding: 12px 14px; border: 2px solid #e8e8e8; border-radius: 10px;
+        font-size: 0.95rem; transition: border-color 0.3s; box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+    }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: #667eea; outline: none; }
+    .contact-form textarea { resize: vertical; }
+
+    .btn-send {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 14px 32px; border: none; border-radius: 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+        transition: all 0.3s; font-family: 'Inter', sans-serif;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+    .btn-send:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(102,126,234,0.5); }
+
+    /* İLETİŞİM BİLGİLERİ */
+    .contact-info-side { display: flex; flex-direction: column; gap: 16px; }
+    .contact-info-card {
+        background: #fff; border-radius: 14px; padding: 22px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        display: flex; gap: 16px; align-items: flex-start;
+        transition: transform 0.2s;
+    }
+    .contact-info-card:hover { transform: translateY(-3px); }
+
+    .info-icon {
+        width: 50px; height: 50px; border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; flex-shrink: 0;
+    }
+    .phone-icon { background: #dbeafe; color: #2563eb; }
+    .email-icon { background: #d1fae5; color: #059669; }
+    .address-icon { background: #fef3c7; color: #d97706; }
+
+    .info-content h4 { margin: 0 0 4px; font-size: 0.95rem; color: #333; }
+    .info-content p { margin: 0; font-size: 0.9rem; color: #555; font-weight: 500; }
+    .info-content span { font-size: 0.8rem; color: #999; }
+
+    /* TOAST */
+    .toast-notification {
+        position: fixed; bottom: 30px; right: 30px; background: #333; color: #fff;
+        padding: 16px 24px; border-radius: 12px; display: flex; align-items: center; gap: 10px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2); z-index: 9999;
+        transform: translateY(100px); opacity: 0; transition: all 0.4s ease;
+        font-size: 0.9rem; font-weight: 500;
+    }
+    .toast-notification.show { transform: translateY(0); opacity: 1; }
+    .toast-notification.success { background: #27ae60; }
+    .toast-notification.error { background: #e74c3c; }
+
+    @@media (max-width: 768px) {
+        .contact-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<script>
+    function showToast(message, type) {
+        var toast = document.getElementById('toastNotification');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-notification ' + (type || 'success') + ' show';
+        setTimeout(function () { toast.classList.remove('show'); }, 3000);
+    }
+
+    function sendMessage() {
+        var name = document.getElementById('contactName').value.trim();
+        var email = document.getElementById('contactEmail').value.trim();
+        var msg = document.getElementById('contactMessage').value.trim();
+
+        if (!name || !email || !msg) {
+            showToast('Lütfen tüm alanları doldurun.', 'error');
+            return;
+        }
+        if (!email.includes('@@')) {
+            showToast('Geçerli bir e-posta adresi girin.', 'error');
+            return;
+        }
+
+        var btn = event.target.closest('button');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+
+        // Simüle gönderme
+        setTimeout(function () {
+            showToast('Mesajınız başarıyla gönderildi! En kısa sürede dönüş yapacağız.', 'success');
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactEmail').value = '';
+            document.getElementById('contactMessage').value = '';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Mesajı Gönder';
+        }, 1200);
+    }
+</script>

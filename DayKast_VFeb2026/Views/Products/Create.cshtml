@@ -1,0 +1,290 @@
+﻿@model DayKast_VFeb2026.Models.Products
+
+@{
+    ViewBag.Title = "Ürün Ekle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+    @using (Html.BeginForm("Create", "Products", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        <h4>Ürünler</h4>
+        <hr />
+        <div class="form-horizontal">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("ProductName", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("StockCode", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.StockCode, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.StockCode, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("CategoryID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("CategoryID", null, "Seçiniz", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CategoryID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("BrandID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("BrandID", null, "Seçiniz", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.BrandID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("SupplierID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("SupplierID", null, "Seçiniz", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.SupplierID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Scale", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Scale, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Scale, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("PurchasePrice", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PurchasePrice, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PurchasePrice, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("SalePrice", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.SalePrice, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SalePrice, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("StockQuantity", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.StockQuantity, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.StockQuantity, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("ProductType", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ProductType, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ProductType, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Condition", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Condition, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Condition, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Description", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("IsActive", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.IsActive)
+                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== ÜRÜN RESMİ YÜKLEME ALANI ========== -->
+            <div class="form-group">
+                <label class="control-label col-md-2">Ürün Resmi</label>
+                <div class="col-md-10">
+                    <div style="border: 2px dashed #ccc; border-radius: 8px; padding: 20px; text-align: center; background: #f9f9f9; cursor: pointer; transition: all 0.3s;"
+                         id="dropZone"
+                         onclick="document.getElementById('productImages').click()">
+                        <div id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #667eea; margin-bottom: 10px;"></i>
+                            <p style="margin: 0; color: #666; font-size: 16px;"><strong>Resim yüklemek için tıklayın veya sürükleyin</strong></p>
+                            <p style="margin: 5px 0 0; color: #999; font-size: 13px;">PNG, JPG, JPEG, GIF — Maks. 5MB (Birden fazla seçebilirsiniz)</p>
+                        </div>
+                    </div>
+                    <input type="file" id="productImages" name="productImages" multiple accept="image/*" style="display: none;" onchange="previewImages(this)" />
+
+                    <!-- Önizleme ve Kapak Fotoğrafı Seçimi -->
+                    <div id="imagePreviewContainer" style="display: none; margin-top: 15px;">
+                        <input type="hidden" id="coverImageIndex" name="coverImageIndex" value="0" />
+                        <label style="font-weight: 600; margin-bottom: 10px; display: block; color: #333;">
+                            <i class="fas fa-star" style="color: #f39c12;"></i> Kapak fotoğrafını seçin:
+                        </label>
+                        <div id="imagePreviews" style="display: flex; flex-wrap: wrap; gap: 12px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top:10px;">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Kaydet" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+        @Html.ActionLink("Tüm Liste", "Index", null, new { @class = "btn btn-light" })
+    </div>
+
+<style>
+    .img-preview-card {
+        position: relative;
+        width: 140px;
+        cursor: pointer;
+        border: 3px solid #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all 0.3s;
+        background: #fff;
+    }
+    .img-preview-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102,126,234,0.25);
+    }
+    .img-preview-card.selected {
+        border-color: #f39c12;
+        box-shadow: 0 4px 12px rgba(243,156,18,0.35);
+    }
+    .img-preview-card img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        display: block;
+    }
+    .img-preview-card .cover-badge {
+        display: none;
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background: #f39c12;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 12px;
+    }
+    .img-preview-card.selected .cover-badge {
+        display: block;
+    }
+    .img-preview-card .img-label {
+        padding: 6px 8px;
+        text-align: center;
+        font-size: 12px;
+        color: #666;
+        background: #fafafa;
+        border-top: 1px solid #eee;
+    }
+    .img-preview-card.selected .img-label {
+        background: #fff8e1;
+        color: #e67e22;
+        font-weight: 600;
+    }
+</style>
+
+<script>
+    function previewImages(input) {
+        var previewContainer = document.getElementById('imagePreviews');
+        var previewSection = document.getElementById('imagePreviewContainer');
+        var placeholder = document.getElementById('uploadPlaceholder');
+        previewContainer.innerHTML = '';
+
+        if (input.files && input.files.length > 0) {
+            previewSection.style.display = 'block';
+            placeholder.innerHTML = '<i class="fas fa-check-circle" style="font-size:32px; color:#27ae60; margin-bottom:8px;"></i>'
+                + '<p style="margin:0; color:#27ae60; font-size:14px;"><strong>' + input.files.length + ' resim seçildi</strong></p>'
+                + '<p style="margin:3px 0 0; color:#999; font-size:12px;">Değiştirmek için tekrar tıklayın</p>';
+
+            // coverImageIndex sıfırla
+            document.getElementById('coverImageIndex').value = '0';
+
+            for (var i = 0; i < input.files.length; i++) {
+                (function(index, file) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var card = document.createElement('div');
+                        card.className = 'img-preview-card' + (index === 0 ? ' selected' : '');
+                        card.setAttribute('data-index', index);
+                        card.onclick = function (ev) {
+                            ev.stopPropagation();
+                            selectCoverImage(index);
+                        };
+                        card.innerHTML =
+                            '<span class="cover-badge"><i class="fas fa-star"></i> Kapak</span>' +
+                            '<img src="' + e.target.result + '" />' +
+                            '<div class="img-label">' + file.name.substring(0, 18) + (file.name.length > 18 ? '...' : '') + '</div>';
+                        previewContainer.appendChild(card);
+                    };
+                    reader.readAsDataURL(file);
+                })(i, input.files[i]);
+            }
+        } else {
+            previewSection.style.display = 'none';
+            placeholder.innerHTML = '<i class="fas fa-cloud-upload-alt" style="font-size:48px; color:#667eea; margin-bottom:10px;"></i>'
+                + '<p style="margin:0; color:#666; font-size:16px;"><strong>Resim yüklemek için tıklayın veya sürükleyin</strong></p>'
+                + '<p style="margin:5px 0 0; color:#999; font-size:13px;">PNG, JPG, JPEG, GIF — Maks. 5MB (Birden fazla seçebilirsiniz)</p>';
+        }
+    }
+
+    function selectCoverImage(index) {
+        document.getElementById('coverImageIndex').value = index;
+        var cards = document.querySelectorAll('.img-preview-card');
+        cards.forEach(function (card) {
+            card.classList.remove('selected');
+        });
+        var selectedCard = document.querySelector('.img-preview-card[data-index="' + index + '"]');
+        if (selectedCard) {
+            selectedCard.classList.add('selected');
+        }
+    }
+
+    // Drag & Drop desteği
+    var dropZone = document.getElementById('dropZone');
+    dropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        this.style.borderColor = '#667eea';
+        this.style.background = '#f0f0ff';
+    });
+    dropZone.addEventListener('dragleave', function (e) {
+        e.preventDefault();
+        this.style.borderColor = '#ccc';
+        this.style.background = '#f9f9f9';
+    });
+    dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        this.style.borderColor = '#ccc';
+        this.style.background = '#f9f9f9';
+        document.getElementById('productImages').files = e.dataTransfer.files;
+        previewImages(document.getElementById('productImages'));
+    });
+</script>

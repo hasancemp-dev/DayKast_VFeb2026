@@ -1,0 +1,79 @@
+﻿@model DayKast_VFeb2026.Models.Orders
+
+@{
+    ViewBag.Title = "Sipariş Düzenle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var statusList = new List<SelectListItem>
+    {
+        new SelectListItem { Text = "Beklemede", Value = "Beklemede", Selected = Model.OrderStatus == "Beklemede" },
+        new SelectListItem { Text = "Hazırlanıyor", Value = "Hazırlanıyor", Selected = Model.OrderStatus == "Hazırlanıyor" },
+        new SelectListItem { Text = "Kargoda", Value = "Kargoda", Selected = Model.OrderStatus == "Kargoda" },
+        new SelectListItem { Text = "Teslim Edildi", Value = "Teslim Edildi", Selected = Model.OrderStatus == "Teslim Edildi" },
+        new SelectListItem { Text = "İptal Edildi", Value = "İptal Edildi", Selected = Model.OrderStatus == "İptal Edildi" }
+    };
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Sipariş Düzenle — #@Model.OrderID</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.OrderID)
+        @Html.HiddenFor(model => model.MemberID)
+        @Html.HiddenFor(model => model.OrderDate)
+        @Html.HiddenFor(model => model.TotalAmount)
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Üye</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" value="@(Model.Members != null ? Model.Members.FirstName + " " + Model.Members.LastName : "Üye #" + Model.MemberID)" readonly style="background:#f5f6f8; cursor:not-allowed;" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Sipariş Tarihi</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" value="@Model.OrderDate.ToString("dd.MM.yyyy HH:mm")" readonly style="background:#f5f6f8; cursor:not-allowed;" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Toplam Tutar</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" value="₺@Model.TotalAmount.ToString("N2")" readonly style="background:#f5f6f8; cursor:not-allowed;" />
+            </div>
+        </div>
+
+        <hr style="border:none; height:1px; background:linear-gradient(to right, #3498db33, #ecf0f1, transparent); margin: 10px 0 20px;" />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.OrderStatus, "Sipariş Durumu", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.OrderStatus, statusList, "-- Durum Seçin --", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.OrderStatus, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TrackingNumber, "Takip No", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TrackingNumber, new { htmlAttributes = new { @class = "form-control", placeholder = "Kargo takip numarasını girin" } })
+                @Html.ValidationMessageFor(model => model.TrackingNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Güncelle" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Tüm Liste", "Index")
+</div>

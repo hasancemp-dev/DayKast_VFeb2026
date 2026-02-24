@@ -1,0 +1,317 @@
+@{
+    ViewBag.Title = "Kariyer";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<section class="page-hero">
+    <div class="page-hero-content">
+        <h1><i class="fas fa-briefcase"></i> Kariyer</h1>
+        <p>DayKast ailesine katılın, geleceği birlikte inşa edelim</p>
+    </div>
+</section>
+
+<div class="career-page">
+
+    <!-- İNSAN KAYNAKLARI YAZISI -->
+    <div class="career-intro">
+        <div class="intro-badge">
+            <i class="fas fa-star"></i> İnsan Kaynakları
+        </div>
+        <h2>Yetenekli insanlarla birlikte büyüyoruz</h2>
+        <p>
+            DayKast olarak, başarımızın arkasındaki en büyük gücün ekibimiz olduğuna inanıyoruz. 
+            Farklı bakış açılarını bir araya getiren, yaratıcılığı teşvik eden ve herkesin potansiyelini 
+            en üst düzeyde gerçekleştirebileceği bir çalışma ortamı sunuyoruz. Amacımız sadece iş arkadaşları 
+            değil, tutkuları ve hedefleri paylaşan bir aile oluşturmak. Eğer dinamik, yenilikçi ve büyümeye 
+            açık bir ortamda kariyer yapmak istiyorsanız, sizi aramızda görmekten mutluluk duyarız.
+        </p>
+    </div>
+
+    <!-- AVANTAJLAR -->
+    <div class="advantages-section">
+        <h2><i class="fas fa-gift" style="color:#f56565;"></i> Bizimle Çalışmanın Avantajları</h2>
+        <div class="advantages-grid">
+            <div class="advantage-card">
+                <div class="adv-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h4>Sürekli Gelişim</h4>
+                <p>Eğitim programları, konferanslar ve sertifika destekleri ile kendinizi sürekli geliştirme imkânı.</p>
+            </div>
+            <div class="advantage-card">
+                <div class="adv-icon"><i class="fas fa-clock"></i></div>
+                <h4>Esnek Çalışma</h4>
+                <p>Hibrit çalışma modeli ve esnek mesai saatleri ile iş-yaşam dengenizi koruyun.</p>
+            </div>
+            <div class="advantage-card">
+                <div class="adv-icon"><i class="fas fa-heartbeat"></i></div>
+                <h4>Sağlık Sigortası</h4>
+                <p>Özel sağlık sigortası, diş ve göz sağlığı paketleri siz ve aileniz için.</p>
+            </div>
+            <div class="advantage-card">
+                <div class="adv-icon"><i class="fas fa-chart-line"></i></div>
+                <h4>Kariyer İlerleme</h4>
+                <p>Net kariyer yolları, mentorluk programları ve terfi fırsatları ile büyüyün.</p>
+            </div>
+            <div class="advantage-card">
+                <div class="adv-icon"><i class="fas fa-utensils"></i></div>
+                <h4>Yemek & Ulaşım</h4>
+                <p>Günlük yemek desteği ve ulaşım kartı ile maddi yüklerinizi azaltıyoruz.</p>
+            </div>
+            <div class="advantage-card">
+                <div class="adv-icon"><i class="fas fa-gamepad"></i></div>
+                <h4>Sosyal Aktiviteler</h4>
+                <p>Takım etkinlikleri, hackathon'lar, spor aktiviteleri ve daha fazlası.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CV BAŞVURU FORMU -->
+    <div class="cv-section">
+        <div class="cv-card">
+            <div class="cv-header">
+                <div class="cv-header-icon">
+                    <i class="fas fa-file-upload"></i>
+                </div>
+                <div>
+                    <h3>Başvurunu Yap</h3>
+                    <p>CV'nizi yükleyin, biz sizinle iletişime geçelim</p>
+                </div>
+            </div>
+            <div class="cv-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Ad Soyad</label>
+                        <input type="text" id="cvName" placeholder="Adınız ve soyadınız" />
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-at"></i> E-posta</label>
+                        <input type="email" id="cvEmail" placeholder="ornek@email.com" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Telefon</label>
+                    <input type="text" id="cvPhone" placeholder="+90 (___) ___ __ __" />
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-briefcase"></i> Başvurulan Pozisyon (opsiyonel)</label>
+                    <input type="text" id="cvPosition" placeholder="ör: Yazılım Geliştirici, UI/UX Tasarımcı" />
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-paperclip"></i> CV Yükle</label>
+                    <div class="cv-upload-area" id="cvUploadArea" onclick="document.getElementById('cvFile').click()">
+                        <input type="file" id="cvFile" accept=".pdf,.doc,.docx" style="display:none;" onchange="handleFileSelect(this)" />
+                        <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <p id="uploadLabel">CV dosyanızı sürükleyin veya tıklayarak seçin</p>
+                        <span>PDF, DOC, DOCX • Maks. 5MB</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-comment"></i> Ek Not (opsiyonel)</label>
+                    <textarea id="cvNote" rows="3" placeholder="Kendinizi kısaca tanıtın veya eklemek istediklerinizi yazın..."></textarea>
+                </div>
+                <button class="btn-apply" onclick="submitApplication()">
+                    <i class="fas fa-paper-plane"></i> Başvuruyu Gönder
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-notification" id="toastNotification">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage"></span>
+</div>
+
+<style>
+    .page-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 50px 20px; text-align: center; color: #fff;
+    }
+    .page-hero h1 { font-size: 2rem; font-weight: 800; margin: 0 0 8px; }
+    .page-hero h1 i { margin-right: 10px; }
+    .page-hero p { margin: 0; opacity: 0.85; font-size: 1.05rem; }
+
+    .career-page { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+
+    /* İNTRO */
+    .career-intro {
+        background: #fff; border-radius: 16px; padding: 40px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07); margin-bottom: 36px;
+        text-align: center;
+    }
+    .intro-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff; padding: 8px 20px; border-radius: 20px;
+        font-size: 0.85rem; font-weight: 700; margin-bottom: 18px;
+    }
+    .career-intro h2 { margin: 0 0 16px; font-size: 1.5rem; color: #333; }
+    .career-intro p {
+        margin: 0; font-size: 1rem; color: #666; line-height: 1.8;
+        max-width: 800px; margin: 0 auto;
+    }
+
+    /* AVANTAJLAR */
+    .advantages-section {
+        margin-bottom: 36px;
+    }
+    .advantages-section h2 {
+        text-align: center; font-size: 1.3rem; color: #333; margin: 0 0 28px;
+    }
+    .advantages-section h2 i { margin-right: 8px; }
+    .advantages-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .advantage-card {
+        background: #fff; border-radius: 16px; padding: 28px; text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07); transition: transform 0.3s;
+    }
+    .advantage-card:hover { transform: translateY(-4px); }
+    .adv-icon {
+        width: 56px; height: 56px; border-radius: 16px; margin: 0 auto 14px;
+        display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff; font-size: 1.3rem;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+    .advantage-card h4 { margin: 0 0 8px; font-size: 1rem; color: #333; }
+    .advantage-card p { margin: 0; font-size: 0.85rem; color: #888; line-height: 1.6; }
+
+    /* CV BAŞVURU */
+    .cv-section { margin-bottom: 40px; }
+    .cv-card {
+        background: #fff; border-radius: 16px; padding: 36px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    }
+    .cv-header {
+        display: flex; align-items: center; gap: 16px;
+        margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0;
+    }
+    .cv-header-icon {
+        width: 56px; height: 56px; border-radius: 16px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 1.4rem; flex-shrink: 0;
+    }
+    .cv-header h3 { margin: 0 0 4px; font-size: 1.15rem; color: #333; }
+    .cv-header p { margin: 0; font-size: 0.88rem; color: #888; }
+
+    .cv-form .form-group { margin-bottom: 18px; }
+    .cv-form label {
+        display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 6px;
+    }
+    .cv-form label i { margin-right: 6px; color: #667eea; font-size: 0.8rem; }
+    .cv-form input, .cv-form textarea {
+        width: 100%; padding: 12px 14px; border: 2px solid #e8e8e8; border-radius: 10px;
+        font-size: 0.95rem; transition: border-color 0.3s; box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+    }
+    .cv-form input:focus, .cv-form textarea:focus { border-color: #667eea; outline: none; }
+    .cv-form textarea { resize: vertical; }
+    .form-row { display: flex; gap: 16px; }
+    .form-row .form-group { flex: 1; }
+
+    .cv-upload-area {
+        border: 2px dashed #d4d4d4; border-radius: 14px; padding: 36px; text-align: center;
+        cursor: pointer; transition: all 0.3s; background: #fafbff;
+    }
+    .cv-upload-area:hover { border-color: #667eea; background: #f5f3ff; }
+    .cv-upload-area.has-file { border-color: #27ae60; background: #f0fdf4; }
+    .upload-icon { font-size: 2rem; color: #667eea; margin-bottom: 10px; }
+    .cv-upload-area p { margin: 0 0 4px; font-size: 0.95rem; color: #555; font-weight: 500; }
+    .cv-upload-area span { font-size: 0.8rem; color: #999; }
+
+    .btn-apply {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 16px 36px; border: none; border-radius: 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer;
+        transition: all 0.3s; font-family: 'Inter', sans-serif;
+        box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+    .btn-apply:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(102,126,234,0.5); }
+
+    /* TOAST */
+    .toast-notification {
+        position: fixed; bottom: 30px; right: 30px; background: #333; color: #fff;
+        padding: 16px 24px; border-radius: 12px; display: flex; align-items: center; gap: 10px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2); z-index: 9999;
+        transform: translateY(100px); opacity: 0; transition: all 0.4s ease;
+        font-size: 0.9rem; font-weight: 500;
+    }
+    .toast-notification.show { transform: translateY(0); opacity: 1; }
+    .toast-notification.success { background: #27ae60; }
+    .toast-notification.error { background: #e74c3c; }
+
+    @@media (max-width: 768px) {
+        .advantages-grid { grid-template-columns: 1fr; }
+        .form-row { flex-direction: column; gap: 0; }
+    }
+</style>
+
+<script>
+    function showToast(message, type) {
+        var toast = document.getElementById('toastNotification');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-notification ' + (type || 'success') + ' show';
+        setTimeout(function () { toast.classList.remove('show'); }, 3500);
+    }
+
+    function handleFileSelect(input) {
+        var area = document.getElementById('cvUploadArea');
+        var label = document.getElementById('uploadLabel');
+        if (input.files && input.files[0]) {
+            var file = input.files[0];
+            var maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                showToast('Dosya boyutu 5MB\'dan küçük olmalıdır.', 'error');
+                input.value = '';
+                return;
+            }
+            label.textContent = file.name;
+            area.classList.add('has-file');
+        } else {
+            label.textContent = 'CV dosyanızı sürükleyin veya tıklayarak seçin';
+            area.classList.remove('has-file');
+        }
+    }
+
+    function submitApplication() {
+        var name = document.getElementById('cvName').value.trim();
+        var email = document.getElementById('cvEmail').value.trim();
+        var phone = document.getElementById('cvPhone').value.trim();
+        var file = document.getElementById('cvFile').files[0];
+
+        if (!name || !email || !phone) {
+            showToast('Lütfen zorunlu alanları doldurun (Ad Soyad, E-posta, Telefon).', 'error');
+            return;
+        }
+        if (!email.includes('@@')) {
+            showToast('Geçerli bir e-posta adresi girin.', 'error');
+            return;
+        }
+        if (!file) {
+            showToast('Lütfen CV dosyanızı yükleyin.', 'error');
+            return;
+        }
+
+        var btn = event.target.closest('button');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+
+        // Simüle gönderme
+        setTimeout(function () {
+            showToast('Başvurunuz başarıyla alındı! En kısa sürede sizinle iletişime geçeceğiz.', 'success');
+            document.getElementById('cvName').value = '';
+            document.getElementById('cvEmail').value = '';
+            document.getElementById('cvPhone').value = '';
+            document.getElementById('cvPosition').value = '';
+            document.getElementById('cvNote').value = '';
+            document.getElementById('cvFile').value = '';
+            document.getElementById('uploadLabel').textContent = 'CV dosyanızı sürükleyin veya tıklayarak seçin';
+            document.getElementById('cvUploadArea').classList.remove('has-file');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Başvuruyu Gönder';
+        }, 1500);
+    }
+</script>

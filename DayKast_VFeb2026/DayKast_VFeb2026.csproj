@@ -1,0 +1,565 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5EBAFE89-E931-47DD-82E5-68E1C7C3C426}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DayKast_VFeb2026</RootNamespace>
+    <AssemblyName>DayKast_VFeb2026</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort>44321</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\lib\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.3.0\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.3.0\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\BrandsController.cs" />
+    <Compile Include="Controllers\CategoriesController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MembersController.cs" />
+    <Compile Include="Controllers\OrdersController.cs" />
+    <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\SuppliersController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Brands.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BrandsMetaData.cs" />
+    <Compile Include="Models\Categories.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CategoriesMetaData.cs" />
+    <Compile Include="Models\DKVFeb2026_Model.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DKVFeb2026_Model.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DKVFeb2026_Model.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DKVFeb2026_Model.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DKVFeb2026_Model.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Favorites.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CommentViewModel.cs" />
+    <Compile Include="Models\DKEntities.Partial.cs" />
+    <Compile Include="Models\Members.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MembersMetaData.cs" />
+    <Compile Include="Models\OrderDetails.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OrderDetailsMetaData.cs" />
+    <Compile Include="Models\Orders.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OrdersArchive.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OrdersMetaData.cs" />
+    <Compile Include="Models\ProductComments.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductImages.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductImagesMetaData.cs" />
+    <Compile Include="Models\Products.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductsMetaData.cs" />
+    <Compile Include="Models\Suppliers.cs">
+      <DependentUpon>DKVFeb2026_Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SuppliersMetaData.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\AdminStyles.css" />
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-grid.rtl.css" />
+    <Content Include="Content\bootstrap-grid.rtl.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap-reboot.rtl.css" />
+    <Content Include="Content\bootstrap-reboot.rtl.min.css" />
+    <Content Include="Content\bootstrap-utilities.css" />
+    <Content Include="Content\bootstrap-utilities.min.css" />
+    <Content Include="Content\bootstrap-utilities.rtl.css" />
+    <Content Include="Content\bootstrap-utilities.rtl.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap.rtl.css" />
+    <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\HomeIndex.css" />
+    <Content Include="Content\Images\android-chrome-192x192.png" />
+    <Content Include="Content\Images\android-chrome-512x512.png" />
+    <Content Include="Content\Images\apple-touch-icon.png" />
+    <Content Include="Content\Images\favicon-16x16.png" />
+    <Content Include="Content\Images\favicon-32x32.png" />
+    <Content Include="Content\Images\favicon.ico" />
+    <Content Include="Content\Images\hero-car.jpeg" />
+    <Content Include="Content\Images\hero-car1.jpeg" />
+    <Content Include="Content\Images\hero-car2.jpeg" />
+    <Content Include="Content\Login.css" />
+    <Content Include="Content\PagedList.css" />
+    <Content Include="Content\Register.css" />
+    <Content Include="Content\UserLayout.css" />
+    <Content Include="Content\UserLayout2.css" />
+    <Content Include="Content\UserLogin.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Models\DKVFeb2026_Model.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DKVFeb2026_Model.edmx</DependentUpon>
+      <LastGenOutput>DKVFeb2026_Model.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\DKVFeb2026_Model.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DKVFeb2026_Model.edmx</DependentUpon>
+      <LastGenOutput>DKVFeb2026_Model.cs</LastGenOutput>
+    </Content>
+    <Content Include="Scripts\bootstrap.bundle.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.esm.js" />
+    <Content Include="Scripts\bootstrap.esm.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <EntityDeploy Include="Models\DKVFeb2026_Model.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>DKVFeb2026_Model.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\DKVFeb2026_Model.edmx.diagram">
+      <DependentUpon>DKVFeb2026_Model.edmx</DependentUpon>
+    </Content>
+    <None Include="Scripts\jquery-3.7.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.7.1.js" />
+    <Content Include="Scripts\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.js" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Uploads\Products\prod_100_1.jpg" />
+    <Content Include="Uploads\Products\prod_101_1.jpg" />
+    <Content Include="Uploads\Products\prod_101_2.jpg" />
+    <Content Include="Uploads\Products\prod_10_1.jpg" />
+    <Content Include="Uploads\Products\prod_10_2.jpg" />
+    <Content Include="Uploads\Products\prod_11_1.jpg" />
+    <Content Include="Uploads\Products\prod_12_1.jpg" />
+    <Content Include="Uploads\Products\prod_12_2.jpg" />
+    <Content Include="Uploads\Products\prod_13_1.jpg" />
+    <Content Include="Uploads\Products\prod_14_1.jpg" />
+    <Content Include="Uploads\Products\prod_14_2.jpg" />
+    <Content Include="Uploads\Products\prod_14_3.jpg" />
+    <Content Include="Uploads\Products\prod_15_1.jpg" />
+    <Content Include="Uploads\Products\prod_16_1.jpg" />
+    <Content Include="Uploads\Products\prod_16_2.jpg" />
+    <Content Include="Uploads\Products\prod_17_1.jpg" />
+    <Content Include="Uploads\Products\prod_18_1.jpg" />
+    <Content Include="Uploads\Products\prod_18_2.jpg" />
+    <Content Include="Uploads\Products\prod_19_1.jpg" />
+    <Content Include="Uploads\Products\prod_19_2.jpg" />
+    <Content Include="Uploads\Products\prod_19_3.jpg" />
+    <Content Include="Uploads\Products\prod_1_1.jpg" />
+    <Content Include="Uploads\Products\prod_1_2.jpg" />
+    <Content Include="Uploads\Products\prod_20_1.jpg" />
+    <Content Include="Uploads\Products\prod_20_2.jpg" />
+    <Content Include="Uploads\Products\prod_21_1.jpg" />
+    <Content Include="Uploads\Products\prod_22_1.jpg" />
+    <Content Include="Uploads\Products\prod_22_2.jpg" />
+    <Content Include="Uploads\Products\prod_23_1.jpg" />
+    <Content Include="Uploads\Products\prod_24_1.jpg" />
+    <Content Include="Uploads\Products\prod_24_2.jpg" />
+    <Content Include="Uploads\Products\prod_25_1.jpg" />
+    <Content Include="Uploads\Products\prod_26_1.jpg" />
+    <Content Include="Uploads\Products\prod_26_2.jpg" />
+    <Content Include="Uploads\Products\prod_26_3.jpg" />
+    <Content Include="Uploads\Products\prod_27_1.jpg" />
+    <Content Include="Uploads\Products\prod_27_2.jpg" />
+    <Content Include="Uploads\Products\prod_28_1.jpg" />
+    <Content Include="Uploads\Products\prod_29_1.jpg" />
+    <Content Include="Uploads\Products\prod_29_2.jpg" />
+    <Content Include="Uploads\Products\prod_2_1.jpg" />
+    <Content Include="Uploads\Products\prod_30_1.jpg" />
+    <Content Include="Uploads\Products\prod_31_1.jpg" />
+    <Content Include="Uploads\Products\prod_31_2.jpg" />
+    <Content Include="Uploads\Products\prod_32_1.jpg" />
+    <Content Include="Uploads\Products\prod_33_1.jpg" />
+    <Content Include="Uploads\Products\prod_33_2.jpg" />
+    <Content Include="Uploads\Products\prod_34_1.jpg" />
+    <Content Include="Uploads\Products\prod_35_1.jpg" />
+    <Content Include="Uploads\Products\prod_35_2.jpg" />
+    <Content Include="Uploads\Products\prod_36_1.jpg" />
+    <Content Include="Uploads\Products\prod_36_2.jpg" />
+    <Content Include="Uploads\Products\prod_36_3.jpg" />
+    <Content Include="Uploads\Products\prod_37_1.jpg" />
+    <Content Include="Uploads\Products\prod_38_1.jpg" />
+    <Content Include="Uploads\Products\prod_38_2.jpg" />
+    <Content Include="Uploads\Products\prod_39_1.jpg" />
+    <Content Include="Uploads\Products\prod_3_1.jpg" />
+    <Content Include="Uploads\Products\prod_3_2.jpg" />
+    <Content Include="Uploads\Products\prod_40_1.jpg" />
+    <Content Include="Uploads\Products\prod_40_2.jpg" />
+    <Content Include="Uploads\Products\prod_41_1.jpg" />
+    <Content Include="Uploads\Products\prod_41_2.jpg" />
+    <Content Include="Uploads\Products\prod_41_3.jpg" />
+    <Content Include="Uploads\Products\prod_42_1.jpg" />
+    <Content Include="Uploads\Products\prod_43_1.jpg" />
+    <Content Include="Uploads\Products\prod_43_2.jpg" />
+    <Content Include="Uploads\Products\prod_44_1.jpg" />
+    <Content Include="Uploads\Products\prod_45_1.jpg" />
+    <Content Include="Uploads\Products\prod_45_2.jpg" />
+    <Content Include="Uploads\Products\prod_45_3.jpg" />
+    <Content Include="Uploads\Products\prod_46_1.jpg" />
+    <Content Include="Uploads\Products\prod_46_2.jpg" />
+    <Content Include="Uploads\Products\prod_47_1.jpg" />
+    <Content Include="Uploads\Products\prod_48_1.jpg" />
+    <Content Include="Uploads\Products\prod_48_2.jpg" />
+    <Content Include="Uploads\Products\prod_49_1.jpg" />
+    <Content Include="Uploads\Products\prod_4_1.jpg" />
+    <Content Include="Uploads\Products\prod_50_1.jpg" />
+    <Content Include="Uploads\Products\prod_50_2.jpg" />
+    <Content Include="Uploads\Products\prod_51_1.jpg" />
+    <Content Include="Uploads\Products\prod_52_1.jpg" />
+    <Content Include="Uploads\Products\prod_52_2.jpg" />
+    <Content Include="Uploads\Products\prod_53_1.jpg" />
+    <Content Include="Uploads\Products\prod_54_1.jpg" />
+    <Content Include="Uploads\Products\prod_54_2.jpg" />
+    <Content Include="Uploads\Products\prod_55_1.jpg" />
+    <Content Include="Uploads\Products\prod_56_1.jpg" />
+    <Content Include="Uploads\Products\prod_56_2.jpg" />
+    <Content Include="Uploads\Products\prod_57_1.jpg" />
+    <Content Include="Uploads\Products\prod_58_1.jpg" />
+    <Content Include="Uploads\Products\prod_58_2.jpg" />
+    <Content Include="Uploads\Products\prod_59_1.jpg" />
+    <Content Include="Uploads\Products\prod_59_2.jpg" />
+    <Content Include="Uploads\Products\prod_59_3.jpg" />
+    <Content Include="Uploads\Products\prod_5_1.jpg" />
+    <Content Include="Uploads\Products\prod_5_2.jpg" />
+    <Content Include="Uploads\Products\prod_5_3.jpg" />
+    <Content Include="Uploads\Products\prod_60_1.jpg" />
+    <Content Include="Uploads\Products\prod_61_1.jpg" />
+    <Content Include="Uploads\Products\prod_61_2.jpg" />
+    <Content Include="Uploads\Products\prod_62_1.jpg" />
+    <Content Include="Uploads\Products\prod_63_1.jpg" />
+    <Content Include="Uploads\Products\prod_63_2.jpg" />
+    <Content Include="Uploads\Products\prod_64_1.jpg" />
+    <Content Include="Uploads\Products\prod_65_1.jpg" />
+    <Content Include="Uploads\Products\prod_65_2.jpg" />
+    <Content Include="Uploads\Products\prod_66_1.jpg" />
+    <Content Include="Uploads\Products\prod_67_1.jpg" />
+    <Content Include="Uploads\Products\prod_67_2.jpg" />
+    <Content Include="Uploads\Products\prod_68_1.jpg" />
+    <Content Include="Uploads\Products\prod_69_1.jpg" />
+    <Content Include="Uploads\Products\prod_69_2.jpg" />
+    <Content Include="Uploads\Products\prod_6_1.jpg" />
+    <Content Include="Uploads\Products\prod_6_2.jpg" />
+    <Content Include="Uploads\Products\prod_70_1.jpg" />
+    <Content Include="Uploads\Products\prod_70_2.jpg" />
+    <Content Include="Uploads\Products\prod_70_3.jpg" />
+    <Content Include="Uploads\Products\prod_71_1.jpg" />
+    <Content Include="Uploads\Products\prod_72_1.jpg" />
+    <Content Include="Uploads\Products\prod_72_2.jpg" />
+    <Content Include="Uploads\Products\prod_73_1.jpg" />
+    <Content Include="Uploads\Products\prod_74_1.jpg" />
+    <Content Include="Uploads\Products\prod_74_2.jpg" />
+    <Content Include="Uploads\Products\prod_75_1.jpg" />
+    <Content Include="Uploads\Products\prod_76_1.jpg" />
+    <Content Include="Uploads\Products\prod_76_2.jpg" />
+    <Content Include="Uploads\Products\prod_77_1.jpg" />
+    <Content Include="Uploads\Products\prod_78_1.jpg" />
+    <Content Include="Uploads\Products\prod_78_2.jpg" />
+    <Content Include="Uploads\Products\prod_79_1.jpg" />
+    <Content Include="Uploads\Products\prod_7_1.jpg" />
+    <Content Include="Uploads\Products\prod_80_1.jpg" />
+    <Content Include="Uploads\Products\prod_80_2.jpg" />
+    <Content Include="Uploads\Products\prod_81_1.jpg" />
+    <Content Include="Uploads\Products\prod_82_1.jpg" />
+    <Content Include="Uploads\Products\prod_82_2.jpg" />
+    <Content Include="Uploads\Products\prod_83_1.jpg" />
+    <Content Include="Uploads\Products\prod_84_1.jpg" />
+    <Content Include="Uploads\Products\prod_84_2.jpg" />
+    <Content Include="Uploads\Products\prod_85_1.jpg" />
+    <Content Include="Uploads\Products\prod_86_1.jpg" />
+    <Content Include="Uploads\Products\prod_86_2.jpg" />
+    <Content Include="Uploads\Products\prod_87_1.jpg" />
+    <Content Include="Uploads\Products\prod_88_1.jpg" />
+    <Content Include="Uploads\Products\prod_88_2.jpg" />
+    <Content Include="Uploads\Products\prod_89_1.jpg" />
+    <Content Include="Uploads\Products\prod_89_2.jpg" />
+    <Content Include="Uploads\Products\prod_89_3.jpg" />
+    <Content Include="Uploads\Products\prod_8_1.jpg" />
+    <Content Include="Uploads\Products\prod_8_2.jpg" />
+    <Content Include="Uploads\Products\prod_90_1.jpg" />
+    <Content Include="Uploads\Products\prod_91_1.jpg" />
+    <Content Include="Uploads\Products\prod_91_2.jpg" />
+    <Content Include="Uploads\Products\prod_92_1.jpg" />
+    <Content Include="Uploads\Products\prod_93_1.jpg" />
+    <Content Include="Uploads\Products\prod_93_2.jpg" />
+    <Content Include="Uploads\Products\prod_94_1.jpg" />
+    <Content Include="Uploads\Products\prod_95_1.jpg" />
+    <Content Include="Uploads\Products\prod_95_2.jpg" />
+    <Content Include="Uploads\Products\prod_96_1.jpg" />
+    <Content Include="Uploads\Products\prod_97_1.jpg" />
+    <Content Include="Uploads\Products\prod_97_2.jpg" />
+    <Content Include="Uploads\Products\prod_98_1.jpg" />
+    <Content Include="Uploads\Products\prod_99_1.jpg" />
+    <Content Include="Uploads\Products\prod_99_2.jpg" />
+    <Content Include="Uploads\Products\prod_9_1.jpg" />
+    <Content Include="Uploads\Products\prod_9_2.jpg" />
+    <Content Include="Uploads\Products\prod_9_3.jpg" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Brands\Create.cshtml" />
+    <Content Include="Views\Brands\Delete.cshtml" />
+    <Content Include="Views\Brands\Edit.cshtml" />
+    <Content Include="Views\Brands\Index.cshtml" />
+    <Content Include="Views\Categories\Create.cshtml" />
+    <Content Include="Views\Categories\Delete.cshtml" />
+    <Content Include="Views\Categories\Edit.cshtml" />
+    <Content Include="Views\Categories\Index.cshtml" />
+    <Content Include="Views\Members\Create.cshtml" />
+    <Content Include="Views\Members\Delete.cshtml" />
+    <Content Include="Views\Members\Edit.cshtml" />
+    <Content Include="Views\Members\Index.cshtml" />
+    <Content Include="Views\Orders\Create.cshtml" />
+    <Content Include="Views\Orders\Delete.cshtml" />
+    <Content Include="Views\Orders\Edit.cshtml" />
+    <Content Include="Views\Orders\Index.cshtml" />
+    <Content Include="Views\Products\Create.cshtml" />
+    <Content Include="Views\Products\Delete.cshtml" />
+    <Content Include="Views\Products\Details.cshtml" />
+    <Content Include="Views\Products\Edit.cshtml" />
+    <Content Include="Views\Products\Index.cshtml" />
+    <Content Include="Views\Suppliers\Create.cshtml" />
+    <Content Include="Views\Suppliers\Delete.cshtml" />
+    <Content Include="Views\Suppliers\Edit.cshtml" />
+    <Content Include="Views\Suppliers\Index.cshtml" />
+    <Content Include="Views\Admin\YonetimPaneli.cshtml" />
+    <Content Include="Views\Admin\Login.cshtml" />
+    <Content Include="Views\Shared\_AdminLayout.cshtml" />
+    <Content Include="Views\Shared\_UserLayout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Home\Register.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Career.cshtml" />
+    <Content Include="Views\Home\Checkout.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\MyAccount.cshtml" />
+    <Content Include="Views\Home\MyOrders.cshtml" />
+    <Content Include="Views\Home\OrderSuccess.cshtml" />
+    <Content Include="Views\Home\ProductDetail.cshtml" />
+    <Content Include="Views\Orders\Details.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="CrystalReports\" />
+    <Folder Include="Uploads\UsedProducts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap.rtl.min.css.map" />
+    <Content Include="Content\bootstrap.rtl.css.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-utilities.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-utilities.rtl.css.map" />
+    <Content Include="Content\bootstrap-utilities.min.css.map" />
+    <Content Include="Content\bootstrap-utilities.css.map" />
+    <Content Include="Content\bootstrap-reboot.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.rtl.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-grid.rtl.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
+    <None Include="packages.config" />
+    <Content Include="Scripts\bootstrap.min.js.map" />
+    <Content Include="Scripts\bootstrap.js.map" />
+    <Content Include="Scripts\bootstrap.esm.min.js.map" />
+    <Content Include="Scripts\bootstrap.esm.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.7.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>52133</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>https://localhost:44321/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets'))" />
+  </Target>
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

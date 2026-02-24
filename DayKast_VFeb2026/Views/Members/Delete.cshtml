@@ -1,0 +1,56 @@
+﻿@model DayKast_VFeb2026.Models.Members
+
+@{
+    ViewBag.Title = "Üye Sil";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h3><i class="fas fa-exclamation-triangle"></i> Bu üyeyi silmek istediğinize emin misiniz?</h3>
+<div>
+    <h4>Üye Bilgileri</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Ad</dt>
+        <dd>@Html.DisplayFor(model => model.FirstName)</dd>
+
+        <dt>İkinci Ad</dt>
+        <dd>@Html.DisplayFor(model => model.MiddleName)</dd>
+
+        <dt>Soyad</dt>
+        <dd>@Html.DisplayFor(model => model.LastName)</dd>
+
+        <dt>E-posta</dt>
+        <dd>@Html.DisplayFor(model => model.Email)</dd>
+
+        <dt>Doğum Tarihi</dt>
+        <dd>@Html.DisplayFor(model => model.Birthday)</dd>
+
+        <dt>Ülke</dt>
+        <dd>@Html.DisplayFor(model => model.Country)</dd>
+
+        <dt>Şehir</dt>
+        <dd>@Html.DisplayFor(model => model.City)</dd>
+
+        <dt>İlçe</dt>
+        <dd>@Html.DisplayFor(model => model.District)</dd>
+
+        <dt>Adres</dt>
+        <dd>@Html.DisplayFor(model => model.Address)</dd>
+
+        <dt>Telefon</dt>
+        <dd>@Html.DisplayFor(model => model.Phone)</dd>
+
+        <dt>Rol</dt>
+        <dd>@(Model.MemberRole == 1 ? "Admin" : "User")</dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions">
+            <input type="submit" value="Sil" class="btn btn-danger" />
+            @Html.ActionLink("İptal - Listeye Dön", "Index")
+        </div>
+    }
+</div>

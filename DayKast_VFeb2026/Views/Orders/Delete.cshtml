@@ -1,0 +1,38 @@
+﻿@model DayKast_VFeb2026.Models.Orders
+
+@{
+    ViewBag.Title = "Sipariş Sil";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h3><i class="fas fa-exclamation-triangle"></i> Bu siparişi silmek istediğinize emin misiniz?</h3>
+<div>
+    <h4>Sipariş Bilgileri</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Üye</dt>
+        <dd>@Html.DisplayFor(model => model.Members.FirstName)</dd>
+
+        <dt>Sipariş Tarihi</dt>
+        <dd>@Html.DisplayFor(model => model.OrderDate)</dd>
+
+        <dt>Toplam Tutar</dt>
+        <dd>@Html.DisplayFor(model => model.TotalAmount) ₺</dd>
+
+        <dt>Sipariş Durumu</dt>
+        <dd>@Html.DisplayFor(model => model.OrderStatus)</dd>
+
+        <dt>Takip No</dt>
+        <dd>@Html.DisplayFor(model => model.TrackingNumber)</dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions">
+            <input type="submit" value="Sil" class="btn btn-danger" />
+            @Html.ActionLink("İptal - Listeye Dön", "Index")
+        </div>
+    }
+</div>

@@ -1,0 +1,188 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Dashboard İstatistik Kartları -->
+<div class="dashboard-stats">
+    <!-- Toplam Ürünler -->
+    <div class="stat-card primary">
+        <div class="stat-card-header">
+            <div>
+                <div class="stat-card-title">Toplam Ürünler</div>
+                <div class="stat-card-value">@ViewBag.TotalProducts</div>
+                <div class="stat-card-label">Sistemdeki ürün sayısı</div>
+            </div>
+            <div class="stat-card-icon">
+                <i class="fas fa-box"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toplam Siparişler -->
+    <div class="stat-card success">
+        <div class="stat-card-header">
+            <div>
+                <div class="stat-card-title">Toplam Siparişler</div>
+                <div class="stat-card-value">@ViewBag.TotalOrders</div>
+                <div class="stat-card-label">Tüm siparişler</div>
+            </div>
+            <div class="stat-card-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toplam Üyeler -->
+    <div class="stat-card warning">
+        <div class="stat-card-header">
+            <div>
+                <div class="stat-card-title">Toplam Üyeler</div>
+                <div class="stat-card-value">@ViewBag.TotalMembers</div>
+                <div class="stat-card-label">Kayıtlı üye sayısı</div>
+            </div>
+            <div class="stat-card-icon">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Düşük Stoklu Ürünler -->
+    <div class="stat-card danger">
+        <div class="stat-card-header">
+            <div>
+                <div class="stat-card-title">DayKast</div>
+                <div class="stat-card-value">COMING SOON</div>
+                <div class="stat-card-label"></div>
+            </div>
+            <div class="stat-card-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- İkinci Satır İstatistikler -->
+<div class="dashboard-stats">
+    <!-- Toplam Kategoriler -->
+    <div class="stat-card primary">
+        <div class="stat-card-header">
+            <div>
+                <div class="stat-card-title">Kategoriler</div>
+                <div class="stat-card-value">@ViewBag.TotalCategories</div>
+                <div class="stat-card-label">Ürün kategorileri</div>
+            </div>
+            <div class="stat-card-icon">
+                <i class="fas fa-tags"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toplam Markalar -->
+    <div class="stat-card success">
+        <div class="stat-card-header">
+            <div>
+                <div class="stat-card-title">Markalar</div>
+                <div class="stat-card-value">@ViewBag.TotalBrands</div>
+                <div class="stat-card-label">Sistemdeki markalar</div>
+            </div>
+            <div class="stat-card-icon">
+                <i class="fas fa-building"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toplam Tedarikçiler -->
+    <div class="stat-card warning">
+        <div class="stat-card-header">
+            <div>
+                <div class="stat-card-title">Tedarikçiler</div>
+                <div class="stat-card-value">@ViewBag.TotalSuppliers</div>
+                <div class="stat-card-label">Aktif tedarikçiler</div>
+            </div>
+            <div class="stat-card-icon">
+                <i class="fas fa-truck"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Son Siparişler Tablosu -->
+<div class="admin-table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-clock"></i> Son Siparişler</h3>
+        <a href="@Url.Action("Index", "Orders")" class="btn btn-primary btn-sm">
+            Tümünü Gör <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+    
+    @if (ViewBag.RecentOrders != null && ((List<DayKast_VFeb2026.Models.Orders>)ViewBag.RecentOrders).Count > 0)
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Sipariş No</th>
+                    <th>Müşteri</th>
+                    <th>Tarih</th>
+                    <th>Tutar</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DayKast_VFeb2026.Models.Orders order in ViewBag.RecentOrders)
+                {
+                    <tr>
+                        <td><strong>#@order.OrderID</strong></td>
+                        <td>
+                            @if (order.Members != null)
+                            {
+                                <span>@order.Members.FirstName @order.Members.LastName</span>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                        <td>@(order.OrderDate != null ? ((DateTime)order.OrderDate).ToString("dd.MM.yyyy") : "-")</td>
+                        <td><strong>@(order.TotalAmount != 0 ? ((decimal)order.TotalAmount).ToString("C2") : "0,00 ₺")</strong></td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="@Url.Action("Details", "Orders", new { id = order.OrderID })" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i> Detay
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="p-20 text-center">
+            <i class="fas fa-inbox" style="font-size: 48px; color: #bdc3c7; margin-bottom: 15px;"></i>
+            <p style="color: #7f8c8d;">Henüz sipariş bulunmamaktadır.</p>
+        </div>
+    }
+</div>
+
+<!-- Hızlı Erişim Butonları -->
+<div style="margin-top: 30px;">
+    <h3 style="margin-bottom: 20px; color: #2c3e50;">
+        <i class="fas fa-bolt"></i> Hızlı Erişim
+    </h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <a href="@Url.Action("Create", "Products")" class="btn btn-primary" style="padding: 15px;">
+            <i class="fas fa-plus-circle"></i> Yeni Ürün Ekle
+        </a>
+        <a href="@Url.Action("Create", "Categories")" class="btn btn-success" style="padding: 15px;">
+            <i class="fas fa-plus-circle"></i> Yeni Kategori Ekle
+        </a>
+        <a href="@Url.Action("Create", "Brands")" class="btn btn-warning" style="padding: 15px;">
+            <i class="fas fa-plus-circle"></i> Yeni Marka Ekle
+        </a>
+        <a href="@Url.Action("Index", "Orders")" class="btn btn-danger" style="padding: 15px;">
+            <i class="fas fa-list"></i> Tüm Siparişler
+        </a>
+    </div>
+</div>

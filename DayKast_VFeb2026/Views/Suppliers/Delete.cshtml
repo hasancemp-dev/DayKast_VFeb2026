@@ -1,0 +1,35 @@
+﻿@model DayKast_VFeb2026.Models.Suppliers
+
+@{
+    ViewBag.Title = "Tedarikçi Sil";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h3><i class="fas fa-exclamation-triangle"></i> Bu tedarikçiyi silmek istediğinize emin misiniz?</h3>
+<div>
+    <h4>Tedarikçi Bilgileri</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Firma Adı</dt>
+        <dd>@Html.DisplayFor(model => model.CompanyName)</dd>
+
+        <dt>İrtibat Kişisi</dt>
+        <dd>@Html.DisplayFor(model => model.ContactPerson)</dd>
+
+        <dt>Telefon</dt>
+        <dd>@Html.DisplayFor(model => model.Phone)</dd>
+
+        <dt>Bakiye</dt>
+        <dd>@Html.DisplayFor(model => model.Balance)</dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions">
+            <input type="submit" value="Sil" class="btn btn-danger" />
+            @Html.ActionLink("İptal - Listeye Dön", "Index")
+        </div>
+    }
+</div>

@@ -1,0 +1,248 @@
+﻿@model IEnumerable<DayKast_VFeb2026.Models.Suppliers>
+
+@{
+    ViewBag.Title = "Tedarikçi Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-truck"></i> Tedarikçi Listesi</h3>
+        <a href="@Url.Action("Create")" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Yeni Tedarikçi Ekle
+        </a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Tedarikçi ID</th>
+                    <th>Şirket Adı</th>
+                    <th>İletişim Kişisi</th>
+                    <th>Telefon</th>
+                    <th>Bakiye</th>
+                    <th>Ürün Sayısı</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>#@item.SupplierID</strong></td>
+                        <td><strong>@item.CompanyName</strong></td>
+                        <td>@(item.ContactPerson ?? "-")</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Phone))
+                            {
+                                <span>@item.Phone</span>
+                            }
+                            else
+                            {
+                                <span style="color: #95a5a6;">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Balance != null)
+                            {
+                                if (item.Balance > 0)
+                                {
+                                    <strong style="color: #27ae60;">@(((decimal)item.Balance).ToString("C2"))</strong>
+                                }
+                                else if (item.Balance < 0)
+                                {
+                                    <strong style="color: #e74c3c;">@(((decimal)item.Balance).ToString("C2"))</strong>
+                                }
+                                else
+                                {
+                                    <span>@(((decimal)item.Balance).ToString("C2"))</span>
+                                }
+                            }
+                            else
+                            {
+                                <span>0,00 ₺</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Products != null && item.Products.Any())
+                            {
+                                <span class="badge badge-info">@item.Products.Count() ürün</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">0 ürün</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm" style="background:#ffd700;color:#333;" onclick="openBalanceModal(@item.SupplierID, '@Html.Raw(item.CompanyName.Replace("'", "\\'"))', @((item.Balance ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture)))" title="Bakiye Güncelle">
+                                    💰
+                                </button>
+                                <a href="@Url.Action("Edit", new { id = item.SupplierID })" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> Düzenle
+                                </a>
+                                <a href="@Url.Action("Details", new { id = item.SupplierID })" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i> Detay
+                                </a>
+                                <a href="@Url.Action("Delete", new { id = item.SupplierID })" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Sil
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="p-20 text-center">
+            <i class="fas fa-inbox" style="font-size: 48px; color: #bdc3c7; margin-bottom: 15px;"></i>
+            <p style="color: #7f8c8d;">Henüz tedarikçi bulunmamaktadır.</p>
+            <a href="@Url.Action("Create")" class="btn btn-success mt-20">
+                <i class="fas fa-plus-circle"></i> İlk Tedarikçiyi Ekle
+            </a>
+        </div>
+    }
+</div>
+
+<!-- BAKIYE GÜNCELLEME MODALI -->
+<div id="balanceModalOverlay" style="display:none;">
+    <div id="balanceModal">
+        <div class="bm-header">
+            <h4>💰 Bakiye Güncelle</h4>
+            <button type="button" class="bm-close" onclick="closeBalanceModal()">&times;</button>
+        </div>
+        <form action="@Url.Action("UpdateBalance", "Suppliers")" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="supplierId" id="bmSupplierId" />
+            <div class="bm-body">
+                <p class="bm-supplier-name" id="bmSupplierName"></p>
+                <p class="bm-current">Mevcut Bakiye: <strong id="bmCurrentBalance"></strong></p>
+
+                <!-- +/- Toggle -->
+                <div class="bm-toggle-container">
+                    <label class="bm-toggle-label">İşlem Tipi:</label>
+                    <div class="bm-toggle">
+                        <input type="radio" name="operation" value="+" id="opPlus" checked />
+                        <label for="opPlus" class="bm-toggle-btn bm-plus">
+                            <i class="fas fa-minus-circle"></i> Ödeme (Bakiyeden Düş)
+                        </label>
+                        <input type="radio" name="operation" value="-" id="opMinus" />
+                        <label for="opMinus" class="bm-toggle-btn bm-minus">
+                            <i class="fas fa-plus-circle"></i> Borç Ekle (Bakiye Artsın)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Tutar -->
+                <div class="bm-amount-group">
+                    <label>Tutar (₺):</label>
+                    <input type="number" name="amount" id="bmAmount" step="0.01" min="0.01" required placeholder="0,00" class="form-control" />
+                </div>
+            </div>
+            <div class="bm-footer">
+                <button type="button" class="btn btn-light" onclick="closeBalanceModal()">İptal</button>
+                <button type="submit" class="btn btn-success">Güncelle</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* ====== MODAL ====== */
+    #balanceModalOverlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.2s;
+    }
+    #balanceModal {
+        background: #fff;
+        border-radius: 14px;
+        width: 460px;
+        max-width: 95%;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+        animation: slideUp 0.3s ease;
+        overflow: hidden;
+    }
+    .bm-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 24px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+    }
+    .bm-header h4 { margin: 0; font-size: 18px; }
+    .bm-close {
+        background: none; border: none; color: #fff;
+        font-size: 24px; cursor: pointer; line-height: 1;
+    }
+    .bm-body { padding: 24px; }
+    .bm-supplier-name {
+        font-size: 16px; font-weight: 700; color: #333;
+        margin: 0 0 6px 0;
+    }
+    .bm-current {
+        font-size: 14px; color: #666;
+        margin: 0 0 20px 0;
+    }
+    .bm-current strong { color: #27ae60; font-size: 16px; }
+    /* Toggle */
+    .bm-toggle-container { margin-bottom: 18px; }
+    .bm-toggle-label { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px; display: block; }
+    .bm-toggle { display: flex; gap: 8px; }
+    .bm-toggle input[type="radio"] { display: none; }
+    .bm-toggle-btn {
+        flex: 1; text-align: center;
+        padding: 10px 8px; border-radius: 8px;
+        cursor: pointer; font-size: 12px; font-weight: 600;
+        border: 2px solid #e0e0e0; color: #888;
+        transition: all 0.25s;
+    }
+    .bm-toggle-btn i { margin-right: 4px; }
+    #opPlus:checked ~ .bm-plus,
+    input#opPlus:checked + label.bm-plus {
+        border-color: #e74c3c; background: #fdf2f2; color: #e74c3c;
+    }
+    #opMinus:checked + label.bm-minus {
+        border-color: #27ae60; background: #f0faf4; color: #27ae60;
+    }
+    .bm-amount-group label { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px; display: block; }
+    .bm-amount-group input {
+        font-size: 18px; font-weight: 700; text-align: center;
+        padding: 12px; border-radius: 8px;
+    }
+    .bm-footer {
+        display: flex; justify-content: flex-end; gap: 10px;
+        padding: 16px 24px; background: #f9f9f9;
+        border-top: 1px solid #eee;
+    }
+    @@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+</style>
+
+<script>
+    function openBalanceModal(id, name, balance) {
+        document.getElementById('bmSupplierId').value = id;
+        document.getElementById('bmSupplierName').textContent = name;
+        document.getElementById('bmCurrentBalance').textContent = balance.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+        document.getElementById('bmAmount').value = '';
+        document.getElementById('opPlus').checked = true;
+        document.getElementById('balanceModalOverlay').style.display = 'flex';
+    }
+    function closeBalanceModal() {
+        document.getElementById('balanceModalOverlay').style.display = 'none';
+    }
+    // Overlay'e tıklayınca kapat
+    document.getElementById('balanceModalOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeBalanceModal();
+    });
+</script>

@@ -1,0 +1,62 @@
+﻿@model DayKast_VFeb2026.Models.Products
+
+@{
+    ViewBag.Title = "Ürün Sil";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h3><i class="fas fa-exclamation-triangle"></i> Bu ürünü silmek istediğinize emin misiniz?</h3>
+<div>
+    <h4>Ürün Bilgileri</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Ürün Adı</dt>
+        <dd>@Html.DisplayFor(model => model.ProductName)</dd>
+
+        <dt>Stok Kodu</dt>
+        <dd>@Html.DisplayFor(model => model.StockCode)</dd>
+
+        <dt>Ölçek</dt>
+        <dd>@Html.DisplayFor(model => model.Scale)</dd>
+
+        <dt>Alış Fiyatı</dt>
+        <dd>@Html.DisplayFor(model => model.PurchasePrice) ₺</dd>
+
+        <dt>Satış Fiyatı</dt>
+        <dd>@Html.DisplayFor(model => model.SalePrice) ₺</dd>
+
+        <dt>Stok Miktarı</dt>
+        <dd>@Html.DisplayFor(model => model.StockQuantity)</dd>
+
+        <dt>Ürün Tipi</dt>
+        <dd>@Html.DisplayFor(model => model.ProductType)</dd>
+
+        <dt>Durum</dt>
+        <dd>@Html.DisplayFor(model => model.Condition)</dd>
+
+        <dt>Açıklama</dt>
+        <dd>@Html.DisplayFor(model => model.Description)</dd>
+
+        <dt>Aktif</dt>
+        <dd>@(Model.IsActive == true ? "Evet" : "Hayır")</dd>
+
+        <dt>Marka</dt>
+        <dd>@Html.DisplayFor(model => model.Brands.BrandName)</dd>
+
+        <dt>Kategori</dt>
+        <dd>@Html.DisplayFor(model => model.Categories.CategoryName)</dd>
+
+        <dt>Tedarikçi</dt>
+        <dd>@Html.DisplayFor(model => model.Suppliers.CompanyName)</dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions">
+            <input type="submit" value="Sil" class="btn btn-danger" />
+            @Html.ActionLink("İptal - Listeye Dön", "Index")
+        </div>
+    }
+</div>

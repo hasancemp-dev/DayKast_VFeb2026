@@ -1,0 +1,239 @@
+﻿@model IEnumerable<DayKast_VFeb2026.Models.Orders>
+
+@{
+    ViewBag.Title = "Sipariş Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-shopping-cart"></i> Sipariş Listesi</h3>
+        <div class="order-search-wrapper">
+            <div class="order-search-box" id="orderSearchBox">
+                <input type="text" id="orderSearchInput" placeholder="Sipariş No..." />
+                <i class="fas fa-search" id="searchIcon"></i>
+            </div>
+        </div>
+    </div>
+    
+    @if (Model != null && Model.Any())
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Sipariş No</th>
+                    <th>Müşteri</th>
+                    <th>Sipariş Tarihi</th>
+                    <th>Toplam Tutar</th>
+                    <th>Durum</th>
+                    <th>Takip No</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>#@item.OrderID</strong></td>
+                        <td>
+                            @if (item.Members != null)
+                            {
+                                <span>@item.Members.FirstName @item.Members.LastName</span>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                        <td>@(item.OrderDate != null ? ((DateTime)item.OrderDate).ToString("dd.MM.yyyy HH:mm") : "-")</td>
+                        <td><strong>@(item.TotalAmount != null ? ((decimal)item.TotalAmount).ToString("C2") : "0,00 ₺")</strong></td>
+                        <td>
+                            @if (item.OrderStatus == "Tamamlandı" || item.OrderStatus == "Completed")
+                            {
+                                <span class="badge badge-success">@item.OrderStatus</span>
+                            }
+                            else if (item.OrderStatus == "Beklemede" || item.OrderStatus == "Pending")
+                            {
+                                <span class="badge badge-warning">@item.OrderStatus</span>
+                            }
+                            else if (item.OrderStatus == "İptal" || item.OrderStatus == "Cancelled")
+                            {
+                                <span class="badge badge-danger">@item.OrderStatus</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-info">@item.OrderStatus</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.TrackingNumber))
+                            {
+                                <code>@item.TrackingNumber</code>
+                            }
+                            else
+                            {
+                                <span style="color: #95a5a6;">-</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="@Url.Action("Edit", new { id = item.OrderID })" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="@Url.Action("Details", new { id = item.OrderID })" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="@Url.Action("Delete", new { id = item.OrderID })" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="p-20 text-center">
+            <i class="fas fa-inbox" style="font-size: 48px; color: #bdc3c7; margin-bottom: 15px;"></i>
+            <p style="color: #7f8c8d;">Henüz sipariş bulunmamaktadır.</p>
+        </div>
+    }
+</div>
+
+<style>
+    /* ====== ARAMA BUTONU ====== */
+    .order-search-wrapper {
+        display: flex;
+        align-items: center;
+    }
+    .order-search-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: #f0f2f5;
+        border-radius: 25px;
+        width: 42px;
+        height: 42px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+    .order-search-box:hover,
+    .order-search-box.active {
+        width: 260px;
+        background: #fff;
+        border-color: #667eea;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    }
+    .order-search-box input {
+        border: none;
+        outline: none;
+        background: transparent;
+        padding: 0 14px;
+        font-size: 14px;
+        color: #333;
+        width: 0;
+        opacity: 0;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    .order-search-box:hover input,
+    .order-search-box.active input {
+        width: calc(100% - 42px);
+        opacity: 1;
+    }
+    .order-search-box #searchIcon {
+        position: absolute;
+        right: 0;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: #667eea;
+        transition: all 0.3s;
+        pointer-events: none;
+    }
+    .order-search-box:not(:hover):not(.active) #searchIcon {
+        color: #888;
+    }
+    /* Bulunan satır vurgulama */
+    .admin-table tbody tr.search-highlight {
+        background: #fff8e1 !important;
+        box-shadow: 0 0 0 2px #f39c12;
+        animation: highlightPulse 0.6s ease;
+    }
+    .admin-table tbody tr.search-not-match {
+        opacity: 0.3;
+        transition: opacity 0.3s;
+    }
+    @@keyframes highlightPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.01); }
+        100% { transform: scale(1); }
+    }
+</style>
+
+<script>
+    (function () {
+        var searchBox = document.getElementById('orderSearchBox');
+        var searchInput = document.getElementById('orderSearchInput');
+
+        // Input'a tıklayınca active yap
+        searchInput.addEventListener('focus', function () {
+            searchBox.classList.add('active');
+        });
+        searchInput.addEventListener('blur', function () {
+            if (!searchInput.value) {
+                searchBox.classList.remove('active');
+                resetHighlight();
+            }
+        });
+
+        // Enter ile arama
+        searchInput.addEventListener('keyup', function (e) {
+            var query = searchInput.value.trim().replace('#', '');
+            var rows = document.querySelectorAll('.admin-table tbody tr');
+
+            if (!query) {
+                resetHighlight();
+                return;
+            }
+
+            var found = false;
+            rows.forEach(function (row) {
+                var orderIdCell = row.querySelector('td:first-child');
+                if (orderIdCell) {
+                    var orderId = orderIdCell.textContent.trim().replace('#', '');
+                    if (orderId === query || orderId.indexOf(query) !== -1) {
+                        row.classList.add('search-highlight');
+                        row.classList.remove('search-not-match');
+                        found = true;
+                    } else {
+                        row.classList.remove('search-highlight');
+                        row.classList.add('search-not-match');
+                    }
+                }
+            });
+
+            if (!found && query) {
+                rows.forEach(function (row) {
+                    row.classList.remove('search-not-match');
+                    row.classList.remove('search-highlight');
+                });
+            }
+        });
+
+        function resetHighlight() {
+            var rows = document.querySelectorAll('.admin-table tbody tr');
+            rows.forEach(function (row) {
+                row.classList.remove('search-highlight');
+                row.classList.remove('search-not-match');
+            });
+        }
+    })();
+</script>

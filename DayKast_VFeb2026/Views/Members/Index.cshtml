@@ -1,0 +1,106 @@
+﻿@model IEnumerable<DayKast_VFeb2026.Models.Members>
+
+@{
+    ViewBag.Title = "Üye Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-table-container">
+    <div class="table-header">
+        <h3><i class="fas fa-users"></i> Üye Listesi</h3>
+        <a href="@Url.Action("Create")" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Yeni Üye Ekle
+        </a>
+    </div>
+    
+    @if (Model != null && Model.Any())
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Üye ID</th>
+                    <th>Ad Soyad</th>
+                    <th>E-posta</th>
+                    <th>Telefon</th>
+                    <th>Şehir</th>
+                    <th>Rol</th>
+                    <th>Sipariş Sayısı</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>#@item.MemberID</strong></td>
+                        <td>
+                            <strong>@item.FirstName @item.MiddleName @item.LastName</strong>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Email))
+                            {
+                                <a href="mailto:@item.Email" style="color: #3498db;">@item.Email</a>
+                            }
+                            else
+                            {
+                                <span style="color: #95a5a6;">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Phone))
+                            {
+                                <span>@item.CountryCode @item.Phone</span>
+                            }
+                            else
+                            {
+                                <span style="color: #95a5a6;">-</span>
+                            }
+                        </td>
+                        <td>@(item.City ?? "-")</td>
+                        <td>
+                            @if (item.MemberRole == 1)
+                            {
+                                <span class="badge badge-danger">@item.MemberRole</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-info">@(item.MemberRole ?? 0)</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Orders != null && item.Orders.Any())
+                            {
+                                <span class="badge badge-success">@item.Orders.Count() sipariş</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">0 sipariş</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="@Url.Action("Edit", new { id = item.MemberID })" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                 
+                                <a href="@Url.Action("Delete", new { id = item.MemberID })" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="p-20 text-center">
+            <i class="fas fa-inbox" style="font-size: 48px; color: #bdc3c7; margin-bottom: 15px;"></i>
+            <p style="color: #7f8c8d;">Henüz üye bulunmamaktadır.</p>
+            <a href="@Url.Action("Create")" class="btn btn-success mt-20">
+                <i class="fas fa-plus-circle"></i> İlk Üyeyi Ekle
+            </a>
+        </div>
+    }
+</div>
