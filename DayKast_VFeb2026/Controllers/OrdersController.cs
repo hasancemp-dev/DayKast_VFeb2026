@@ -8,9 +8,11 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DayKast_VFeb2026.Models;
+using DayKast_VFeb2026.Filters;
 
 namespace DayKast_VFeb2026.Controllers
 {
+    [AdminAuthFilter]
     public class OrdersController : Controller
     {
         DKEntities db = new DKEntities();
@@ -85,13 +87,24 @@ namespace DayKast_VFeb2026.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "OrderID,MemberID,OrderDate,TotalAmount,OrderStatus,TrackingNumber")] Orders orders)
         {
+            // Kargoda durumunda takip numarası zorunlu
+            if (orders.OrderStatus == "Kargoda" && string.IsNullOrWhiteSpace(orders.TrackingNumber))
+            {
+                ModelState.AddModelError("TrackingNumber", "Kargoda durumu için takip numarası zorunludur!");
+            }
+
             if (ModelState.IsValid)
             {
                 db.Entry(orders).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.MemberID = new SelectList(db.Members, "MemberID", "FirstName", orders.MemberID);
+            // Edit view'da Members bilgisi göstermek için tekrar yükle
+            var fullOrder = await db.Orders.Include("Members").Where(o => o.OrderID == orders.OrderID).FirstOrDefaultAsync();
+            if (fullOrder != null)
+            {
+                orders.Members = fullOrder.Members;
+            }
             return View(orders);
         }
 

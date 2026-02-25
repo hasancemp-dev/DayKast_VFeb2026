@@ -8,9 +8,11 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DayKast_VFeb2026.Models;
+using DayKast_VFeb2026.Filters;
 
 namespace DayKast_VFeb2026.Controllers
 {
+    [AdminAuthFilter]
     public class ProductsController : Controller
     {
         DKEntities db = new DKEntities();

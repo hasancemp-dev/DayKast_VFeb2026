@@ -591,7 +591,7 @@ namespace DayKast_VFeb2026.Controllers
 
         // ============================================================
         // SİPARİŞ İPTAL (POST)
-        // Beklemedeki siparişleri iptal eder
+        // Beklemede: süre sınırı yok. Hazırlanıyor: 24 saat içinde iptal edilebilir
         // ============================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -612,9 +612,20 @@ namespace DayKast_VFeb2026.Controllers
                     return Json(new { success = false, message = "Sipariş bulunamadı." });
                 }
 
-                if (order.OrderStatus != "Beklemede")
+                // Sadece Beklemede veya Hazırlanıyor durumundaki siparişler iptal edilebilir
+                if (order.OrderStatus != "Beklemede" && order.OrderStatus != "Hazırlanıyor")
                 {
-                    return Json(new { success = false, message = "Sadece beklemedeki siparişler iptal edilebilir." });
+                    return Json(new { success = false, message = "Sadece 'Beklemede' veya 'Hazırlanıyor' durumundaki siparişler iptal edilebilir." });
+                }
+
+                // Hazırlanıyor durumunda 24 saat kontrolü
+                if (order.OrderStatus == "Hazırlanıyor")
+                {
+                    var hoursSinceOrder = (DateTime.Now - order.OrderDate).TotalHours;
+                    if (hoursSinceOrder > 24)
+                    {
+                        return Json(new { success = false, message = "Sipariş verilmesinin üzerinden 24 saat geçtiği için iptal işlemi yapılamaz. Teslimat sonrası iade hakkınızı kullanabilirsiniz." });
+                    }
                 }
 
                 order.OrderStatus = "İptal Edildi";
@@ -631,6 +642,73 @@ namespace DayKast_VFeb2026.Controllers
 
                 db.SaveChanges();
                 return Json(new { success = true, message = "Sipariş başarıyla iptal edildi." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Bir hata oluştu: " + ex.Message });
+            }
+        }
+
+        // ============================================================
+        // İADE İŞLEMİ (POST)
+        // Teslim edildikten sonra 14 gün içinde iade başlatılabilir
+        // Rastgele 7 haneli iade kodu üretir
+        // ============================================================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ReturnOrder(int orderId)
+        {
+            if (Session["UserID"] == null)
+            {
+                return Json(new { success = false, message = "Oturum açmanız gerekmektedir." });
+            }
+
+            try
+            {
+                int userId = Convert.ToInt32(Session["UserID"]);
+                var order = db.Orders.FirstOrDefault(o => o.OrderID == orderId && o.MemberID == userId);
+
+                if (order == null)
+                {
+                    return Json(new { success = false, message = "Sipariş bulunamadı." });
+                }
+
+                if (order.OrderStatus != "Teslim Edildi")
+                {
+                    return Json(new { success = false, message = "Sadece teslim edilmiş siparişler için iade başlatılabilir." });
+                }
+
+                // 14 gün kontrolü
+                var daysSinceOrder = (DateTime.Now - order.OrderDate).TotalDays;
+                if (daysSinceOrder > 14)
+                {
+                    return Json(new { success = false, message = "İade süresi dolmuştur. Teslimat tarihinden itibaren 14 gün içinde iade yapılabilir." });
+                }
+
+                // Rastgele 7 haneli iade kodu üret
+                var random = new Random();
+                var returnCode = random.Next(1000000, 9999999).ToString();
+
+                order.OrderStatus = "İade Sürecinde";
+
+                // Stokları geri ekle
+                var details = db.OrderDetails.Where(d => d.OrderID == orderId).Include("Products").ToList();
+                foreach (var detail in details)
+                {
+                    if (detail.Products != null)
+                    {
+                        detail.Products.StockQuantity += detail.Quantity;
+                    }
+                }
+
+                db.SaveChanges();
+
+                return Json(new
+                {
+                    success = true,
+                    returnCode = returnCode,
+                    message = "İade süreciniz başlatıldı! İade kodunuz: " + returnCode
+                });
             }
             catch (Exception ex)
             {

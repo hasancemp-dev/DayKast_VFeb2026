@@ -35,8 +35,8 @@ namespace DayKast_VFeb2026.Models
         public string OrderStatus { get; set; }
 
         [Display(Name = "Kargo Takip No")]
-        [StringLength(20, ErrorMessage = "Takip numarası en fazla 20 karakter olabilir.")]
-        [RegularExpression(@"^[a-zA-Z0-9]*$", ErrorMessage = "Güvenlik uyarısı: Takip numarası sadece harf ve rakamlardan oluşabilir.")]
+        [StringLength(50, ErrorMessage = "Takip numarası en fazla 50 karakter olabilir.")]
+        [RegularExpression(@"^(\[[a-zA-ZçğıöşüÇĞİÖŞÜ]+\]\s?)?[a-zA-Z0-9]+$", ErrorMessage = "Güvenlik uyarısı: Takip numarası sadece harf ve rakamlardan oluşabilir.")]
         public string TrackingNumber { get; set; } // NULL olabilir.
     }
 }

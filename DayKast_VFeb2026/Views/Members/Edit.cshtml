@@ -167,7 +167,7 @@
     // Yeni şifre girildiğinde tekrar alanını göster
     document.getElementById('NewPassword').addEventListener('input', function () {
         var confirmGroup = document.getElementById('confirmGroup');
-        confirmGroup.style.display = this.value.length > 0 ? 'block' : 'none';
+        confirmGroup.style.display = this.value.length > 0 ? '' : 'none';
         if (this.value.length === 0) {
             document.getElementById('NewPasswordConfirm').value = '';
             document.getElementById('newPasswordMatchError').style.display = 'none';

@@ -66,6 +66,12 @@
                         <span>Sipariş Yönetimi</span>
                     </a>
                 </li>
+                <li>
+                    <a href="@Url.Action("Reports", "Admin")" class="@(ViewContext.RouteData.Values["action"].ToString() == "Reports" ? "active" : "")">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Rapor İşlemleri</span>
+                    </a>
+                </li>
             </ul>
         </aside>
 

@@ -10,9 +10,11 @@ using System.Web.Mvc;
 using System.Security.Cryptography;
 using System.Text;
 using DayKast_VFeb2026.Models;
+using DayKast_VFeb2026.Filters;
 
 namespace DayKast_VFeb2026.Controllers
 {
+    [AdminAuthFilter]
     public class MembersController : Controller
     {
         DKEntities db = new DKEntities();

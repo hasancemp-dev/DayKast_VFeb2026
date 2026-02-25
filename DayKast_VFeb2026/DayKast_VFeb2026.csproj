@@ -125,6 +125,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Filters\AdminAuthFilter.cs" />
     <Compile Include="Controllers\BrandsController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -218,6 +219,12 @@
     <Content Include="Content\Images\android-chrome-192x192.png" />
     <Content Include="Content\Images\android-chrome-512x512.png" />
     <Content Include="Content\Images\apple-touch-icon.png" />
+    <Content Include="Content\Images\cargo\aras.svg" />
+    <Content Include="Content\Images\cargo\dhl.svg" />
+    <Content Include="Content\Images\cargo\fedex.svg" />
+    <Content Include="Content\Images\cargo\ptt.svg" />
+    <Content Include="Content\Images\cargo\ups.svg" />
+    <Content Include="Content\Images\cargo\yurtici.svg" />
     <Content Include="Content\Images\favicon-16x16.png" />
     <Content Include="Content\Images\favicon-32x32.png" />
     <Content Include="Content\Images\favicon.ico" />
