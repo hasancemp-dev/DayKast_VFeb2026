@@ -57,6 +57,7 @@
                 else if (order.OrderStatus == "Kargoda") { statusClass = "status-shipping"; statusIcon = "fa-truck"; }
                 else if (order.OrderStatus == "Teslim Edildi") { statusClass = "status-delivered"; statusIcon = "fa-check-circle"; }
                 else if (order.OrderStatus == "İptal Edildi") { statusClass = "status-cancelled"; statusIcon = "fa-times-circle"; }
+                else if (order.OrderStatus == "İade Sürecinde") { statusClass = "status-returning"; statusIcon = "fa-undo-alt"; }
 
                 <div class="order-card" data-status="@order.OrderStatus">
                     <!-- SİPARİŞ BAŞLIĞI -->
@@ -85,11 +86,73 @@
 
                     <!-- SİPARİŞ DETAYLARI -->
                     <div class="order-details-panel" id="orderDetails_@order.OrderID" style="display:none;">
-                        @if (!string.IsNullOrEmpty(order.TrackingNumber))
+                         @if (!string.IsNullOrEmpty(order.TrackingNumber))
                         {
-                            <div class="tracking-info">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Kargo Takip No: <strong>@order.TrackingNumber</strong></span>
+                            string cargoCompany = "";
+                            string trackNo = order.TrackingNumber;
+                            string trackUrl = "";
+                            string cargoSvg = "";
+
+                            if (trackNo.StartsWith("[") && trackNo.Contains("]"))
+                            {
+                                int endBracket = trackNo.IndexOf("]");
+                                cargoCompany = trackNo.Substring(1, endBracket - 1);
+                                trackNo = trackNo.Substring(endBracket + 1).Trim();
+                            }
+
+                            switch (cargoCompany)
+                            {
+                                case "DHL":
+                                    trackUrl = "https://www.dhl.com/tr-tr/home/tracking.html?tracking-id=" + trackNo;
+                                    cargoSvg = "dhl";
+                                    break;
+                                case "FedEx":
+                                    trackUrl = "https://www.fedex.com/fedextrack/?trknbr=" + trackNo;
+                                    cargoSvg = "fedex";
+                                    break;
+                                case "Yurtiçi":
+                                    trackUrl = "https://www.yurticikargo.com/tr/online-servisler/gonderi-sorgula?code=" + trackNo;
+                                    cargoSvg = "yurtici";
+                                    break;
+                                case "Aras":
+                                    trackUrl = "https://www.araskargo.com.tr/trs_gonderi_sorgula.aspx?gession=gonderi&q=" + trackNo;
+                                    cargoSvg = "aras";
+                                    break;
+                                case "UPS":
+                                    trackUrl = "https://www.ups.com/track?tracknum=" + trackNo;
+                                    cargoSvg = "ups";
+                                    break;
+                                case "PTT":
+                                    trackUrl = "https://gonderitakip.ptt.gov.tr/Track/Verify?q=" + trackNo;
+                                    cargoSvg = "ptt";
+                                    break;
+                            }
+
+                            <div class="tracking-card">
+                                <div class="tracking-card-left">
+                                    <div class="tracking-icon-circle">
+                                        <i class="fas fa-shipping-fast"></i>
+                                    </div>
+                                    <div class="tracking-details">
+                                        <span class="tracking-label">Kargo Takip No</span>
+                                        <strong class="tracking-number">@trackNo</strong>
+                                    </div>
+                                </div>
+                                @if (!string.IsNullOrEmpty(cargoCompany) && !string.IsNullOrEmpty(trackUrl))
+                                {
+                                    <a href="@trackUrl" target="_blank" class="tracking-link" title="@cargoCompany sitesinde kargonuzu takip edin">
+                                        <img src="@Url.Content("~/Content/Images/cargo/" + cargoSvg + ".svg")" alt="@cargoCompany" class="tracking-cargo-logo" />
+                                        <span class="tracking-link-text">
+                                            Kargom Nerede? <i class="fas fa-external-link-alt"></i>
+                                        </span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <div class="tracking-badge-plain">
+                                        <i class="fas fa-map-marker-alt"></i> Kargo Bilgisi
+                                    </div>
+                                }
                             </div>
                         }
 
@@ -116,11 +179,40 @@
                                 <span>Toplam</span>
                                 <strong>₺@order.TotalAmount.ToString("N2")</strong>
                             </div>
-                            @if (order.OrderStatus == "Beklemede")
+                            @{
+                                var hoursSinceOrder = (DateTime.Now - order.OrderDate).TotalHours;
+                                var daysSinceOrder = (DateTime.Now - order.OrderDate).TotalDays;
+                                bool isBeklemede = order.OrderStatus == "Beklemede";
+                                bool canCancelHazir = order.OrderStatus == "Hazırlanıyor" && hoursSinceOrder <= 24;
+                                bool canReturn = order.OrderStatus == "Teslim Edildi" && daysSinceOrder <= 14;
+                            }
+                            @if (isBeklemede)
                             {
-                                <button class="btn-cancel-order" onclick="cancelOrder(@order.OrderID, event)">
-                                    <i class="fas fa-times"></i> Siparişi İptal Et
-                                </button>
+                                <div class="cancel-return-actions">
+                                    <button class="btn-cancel-order" onclick="cancelOrder(@order.OrderID, event)">
+                                        <i class="fas fa-times"></i> Siparişi İptal Et
+                                    </button>
+                                </div>
+                            }
+                            @if (canCancelHazir)
+                            {
+                                var remainingHours = Math.Max(0, Math.Ceiling(24 - hoursSinceOrder));
+                                <div class="cancel-return-actions">
+                                    <button class="btn-cancel-order" onclick="cancelOrder(@order.OrderID, event)">
+                                        <i class="fas fa-times"></i> Siparişi İptal Et
+                                    </button>
+                                    <span class="action-hint"><i class="fas fa-info-circle"></i> İptal hakkınız: @remainingHours saat kaldı</span>
+                                </div>
+                            }
+                            @if (canReturn)
+                            {
+                                var remainingDays = Math.Max(0, Math.Ceiling(14 - daysSinceOrder));
+                                <div class="cancel-return-actions">
+                                    <button class="btn-return-order" onclick="returnOrder(@order.OrderID, event)">
+                                        <i class="fas fa-undo-alt"></i> İade Et
+                                    </button>
+                                    <span class="action-hint"><i class="fas fa-info-circle"></i> İade hakkınız: @remainingDays gün kaldı</span>
+                                </div>
                             }
                         </div>
                     </div>
@@ -134,6 +226,42 @@
 <div class="toast-notification" id="toastNotification">
     <i class="fas fa-check-circle"></i>
     <span id="toastMessage"></span>
+</div>
+
+<!-- İADE KODU MODAL -->
+<div class="return-modal-overlay" id="returnModal" style="display:none;">
+    <div class="return-modal">
+        <div class="return-modal-header">
+            <i class="fas fa-undo-alt"></i>
+            <h3>İade İşlemi Başlatıldı</h3>
+        </div>
+        <div class="return-modal-body">
+            <p>İade kodunuz aşağıdadır. Bu kodu kargo firmasına söylemeniz gerekmektedir.</p>
+            <div class="return-code-box">
+                <span id="returnCodeDisplay"></span>
+                <button class="btn-copy-code" onclick="copyReturnCode()" title="Kopyala">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+            <div class="return-info-list">
+                <div class="return-info-item">
+                    <i class="fas fa-box"></i>
+                    <span>Ürünleri orijinal ambalajında paketleyin</span>
+                </div>
+                <div class="return-info-item">
+                    <i class="fas fa-truck"></i>
+                    <span>İade kodunuzu kargo firmasına bildirin</span>
+                </div>
+                <div class="return-info-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Kargo tesliminden sonra iade işleminiz tamamlanacaktır</span>
+                </div>
+            </div>
+        </div>
+        <div class="return-modal-footer">
+            <button class="btn-modal-close" onclick="closeReturnModal()">Tamam, Anladım</button>
+        </div>
+    </div>
 </div>
 
 @Html.AntiForgeryToken()
@@ -245,10 +373,47 @@
     }
     @@keyframes fadeInTab { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .tracking-info {
-        display: flex; align-items: center; gap: 8px;
-        padding: 12px 16px; background: #ede9fe; border-radius: 10px;
-        margin-bottom: 16px; font-size: 0.9rem; color: #7c3aed;
+    .tracking-card {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 18px; background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+        border-radius: 12px; margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+        border: 1px solid rgba(124, 58, 237, 0.12);
+    }
+    .tracking-card-left {
+        display: flex; align-items: center; gap: 12px;
+    }
+    .tracking-icon-circle {
+        width: 40px; height: 40px; border-radius: 50%;
+        background: linear-gradient(135deg, #7c3aed, #a78bfa);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 1rem; flex-shrink: 0;
+    }
+    .tracking-details { display: flex; flex-direction: column; }
+    .tracking-label { font-size: 0.75rem; color: #8b5cf6; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .tracking-number { font-size: 1rem; color: #4c1d95; letter-spacing: 1px; font-family: 'Courier New', monospace; }
+
+    .tracking-link {
+        display: flex; align-items: center; gap: 10px;
+        padding: 8px 16px; background: #fff; border-radius: 10px;
+        text-decoration: none; color: #333;
+        border: 2px solid #e5e5e5; transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .tracking-link:hover {
+        border-color: #7c3aed; transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(124, 58, 237, 0.18);
+        text-decoration: none; color: #7c3aed;
+    }
+    .tracking-cargo-logo {
+        height: 32px; width: auto; max-width: 80px; object-fit: contain;
+    }
+    .tracking-link-text {
+        font-size: 0.8rem; font-weight: 700; color: #7c3aed; white-space: nowrap;
+    }
+    .tracking-link-text i { font-size: 0.7rem; margin-left: 2px; }
+    .tracking-badge-plain {
+        padding: 8px 16px; background: #ede9fe; border-radius: 8px;
+        font-size: 0.85rem; color: #7c3aed; font-weight: 600;
     }
 
     .order-items-list { display: flex; flex-direction: column; gap: 10px; }
@@ -269,7 +434,7 @@
     .order-item-total { font-weight: 700; color: #333; font-size: 0.95rem; white-space: nowrap; }
 
     .order-details-footer {
-        display: flex; justify-content: space-between; align-items: center;
+        display: flex; flex-direction: column; gap: 12px;
         margin-top: 16px; padding-top: 16px; border-top: 1px dashed #ddd;
     }
     .order-summary-row { font-size: 1rem; color: #555; }
@@ -284,6 +449,80 @@
         box-shadow: 0 3px 12px rgba(245,101,101,0.3);
     }
     .btn-cancel-order:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(245,101,101,0.4); }
+
+    .btn-return-order {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 10px 20px; border: none; border-radius: 10px;
+        background: linear-gradient(135deg, #f6ad55, #ed8936);
+        color: #fff; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+        transition: all 0.3s; font-family: 'Inter', sans-serif;
+        box-shadow: 0 3px 12px rgba(237,137,54,0.3);
+    }
+    .btn-return-order:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(237,137,54,0.4); }
+
+    .cancel-return-actions {
+        display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .action-hint {
+        font-size: 0.78rem; color: #999; display: flex; align-items: center; gap: 4px;
+    }
+    .action-hint i { font-size: 0.7rem; }
+
+    .status-returning { background: #fff3e0; color: #e65100; }
+
+    /* İADE MODAL */
+    .return-modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 10000;
+        display: flex; align-items: center; justify-content: center;
+        backdrop-filter: blur(4px);
+    }
+    .return-modal {
+        background: #fff; border-radius: 20px; max-width: 480px; width: 90%;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+        animation: modalSlideIn 0.3s ease;
+    }
+    @@keyframes modalSlideIn {
+        from { transform: translateY(30px) scale(0.95); opacity: 0; }
+        to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .return-modal-header {
+        background: linear-gradient(135deg, #f6ad55, #ed8936);
+        padding: 24px; text-align: center; color: #fff;
+    }
+    .return-modal-header i { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .return-modal-header h3 { margin: 0; font-size: 1.2rem; }
+    .return-modal-body { padding: 24px; }
+    .return-modal-body p { color: #666; font-size: 0.9rem; margin: 0 0 16px; text-align: center; }
+    .return-code-box {
+        display: flex; align-items: center; justify-content: center; gap: 12px;
+        background: #f8f9fa; border: 2px dashed #ed8936; border-radius: 12px;
+        padding: 16px; margin-bottom: 20px;
+    }
+    .return-code-box span {
+        font-size: 2rem; font-weight: 900; letter-spacing: 6px;
+        color: #ed8936; font-family: 'Courier New', monospace;
+    }
+    .btn-copy-code {
+        background: #ed8936; color: #fff; border: none; border-radius: 8px;
+        padding: 8px 12px; cursor: pointer; transition: all 0.2s; font-size: 0.9rem;
+    }
+    .btn-copy-code:hover { background: #dd6b20; transform: scale(1.05); }
+    .return-info-list { display: flex; flex-direction: column; gap: 10px; }
+    .return-info-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 14px; background: #fef9f0; border-radius: 10px;
+        font-size: 0.85rem; color: #555;
+    }
+    .return-info-item i { color: #ed8936; font-size: 1rem; width: 20px; text-align: center; }
+    .return-modal-footer { padding: 0 24px 24px; text-align: center; }
+    .btn-modal-close {
+        width: 100%; padding: 14px; border: none; border-radius: 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+        transition: all 0.3s; font-family: 'Inter', sans-serif;
+    }
+    .btn-modal-close:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(102,126,234,0.4); }
 
     /* TOAST */
     .toast-notification {
@@ -368,5 +607,46 @@
             }
         };
         xhr.send('orderId=' + orderId + '&__RequestVerificationToken=' + encodeURIComponent(token));
+    }
+
+    // ========== İADE İŞLEMİ ==========
+    function returnOrder(orderId, event) {
+        event.stopPropagation();
+        if (!confirm('Bu sipariş için iade sürecini başlatmak istediğinizden emin misiniz?')) return;
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '@Url.Action("ReturnOrder", "Home")', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    var res = JSON.parse(xhr.responseText);
+                    if (res.success) {
+                        // İade kodu modalını göster
+                        document.getElementById('returnCodeDisplay').textContent = res.returnCode;
+                        document.getElementById('returnModal').style.display = 'flex';
+                    } else {
+                        showToast(res.message, 'error');
+                    }
+                } else {
+                    showToast('Sunucu hatası.', 'error');
+                }
+            }
+        };
+        xhr.send('orderId=' + orderId + '&__RequestVerificationToken=' + encodeURIComponent(token));
+    }
+
+    function copyReturnCode() {
+        var code = document.getElementById('returnCodeDisplay').textContent;
+        navigator.clipboard.writeText(code).then(function () {
+            showToast('İade kodu kopyalandı!', 'success');
+        });
+    }
+
+    function closeReturnModal() {
+        document.getElementById('returnModal').style.display = 'none';
+        location.reload();
     }
 </script>

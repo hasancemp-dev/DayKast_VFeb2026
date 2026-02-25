@@ -48,27 +48,50 @@
                         <td>@(item.OrderDate != null ? ((DateTime)item.OrderDate).ToString("dd.MM.yyyy HH:mm") : "-")</td>
                         <td><strong>@(item.TotalAmount != null ? ((decimal)item.TotalAmount).ToString("C2") : "0,00 ₺")</strong></td>
                         <td>
-                            @if (item.OrderStatus == "Tamamlandı" || item.OrderStatus == "Completed")
-                            {
-                                <span class="badge badge-success">@item.OrderStatus</span>
+                            @{
+                                string badgeClass = "badge-secondary";
+                                switch (item.OrderStatus)
+                                {
+                                    case "Beklemede":
+                                    case "Pending":
+                                        badgeClass = "badge-waiting";
+                                        break;
+                                    case "Hazırlanıyor":
+                                        badgeClass = "badge-preparing";
+                                        break;
+                                    case "Kargoda":
+                                        badgeClass = "badge-shipping";
+                                        break;
+                                    case "Teslim Edildi":
+                                    case "Tamamlandı":
+                                    case "Completed":
+                                        badgeClass = "badge-delivered";
+                                        break;
+                                    case "İptal Edildi":
+                                    case "İptal":
+                                    case "Cancelled":
+                                        badgeClass = "badge-cancelled";
+                                        break;
+                                }
                             }
-                            else if (item.OrderStatus == "Beklemede" || item.OrderStatus == "Pending")
-                            {
-                                <span class="badge badge-warning">@item.OrderStatus</span>
-                            }
-                            else if (item.OrderStatus == "İptal" || item.OrderStatus == "Cancelled")
-                            {
-                                <span class="badge badge-danger">@item.OrderStatus</span>
-                            }
-                            else
-                            {
-                                <span class="badge badge-info">@item.OrderStatus</span>
-                            }
+                            <span class="badge @badgeClass">@item.OrderStatus</span>
                         </td>
                         <td>
                             @if (!string.IsNullOrEmpty(item.TrackingNumber))
                             {
-                                <code>@item.TrackingNumber</code>
+                                string tn = item.TrackingNumber;
+                                string co = "";
+                                if (tn.StartsWith("[") && tn.Contains("]"))
+                                {
+                                    int eb = tn.IndexOf("]");
+                                    co = tn.Substring(1, eb - 1);
+                                    tn = tn.Substring(eb + 1).Trim();
+                                }
+                                if (!string.IsNullOrEmpty(co))
+                                {
+                                    <span class="badge" style="background:#f0f0f0; color:#555; font-size:0.72rem; margin-right:4px;">@co</span>
+                                }
+                                <code>@tn</code>
                             }
                             else
                             {
@@ -103,6 +126,46 @@
 </div>
 
 <style>
+    /* ====== SİPARİŞ DURUM BADGE'LERİ ====== */
+    .badge {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+    .badge-waiting {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffc107;
+    }
+    .badge-preparing {
+        background: #d6eaff;
+        color: #0c5299;
+        border: 1px solid #4da6ff;
+    }
+    .badge-shipping {
+        background: #ede7f6;
+        color: #5e35b1;
+        border: 1px solid #9575cd;
+    }
+    .badge-delivered {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #28a745;
+    }
+    .badge-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #dc3545;
+    }
+    .badge-secondary {
+        background: #e9ecef;
+        color: #495057;
+        border: 1px solid #adb5bd;
+    }
+
     /* ====== ARAMA BUTONU ====== */
     .order-search-wrapper {
         display: flex;

@@ -10,6 +10,7 @@
         new SelectListItem { Text = "Hazırlanıyor", Value = "Hazırlanıyor", Selected = Model.OrderStatus == "Hazırlanıyor" },
         new SelectListItem { Text = "Kargoda", Value = "Kargoda", Selected = Model.OrderStatus == "Kargoda" },
         new SelectListItem { Text = "Teslim Edildi", Value = "Teslim Edildi", Selected = Model.OrderStatus == "Teslim Edildi" },
+        new SelectListItem { Text = "İade Sürecinde", Value = "İade Sürecinde", Selected = Model.OrderStatus == "İade Sürecinde" },
         new SelectListItem { Text = "İptal Edildi", Value = "İptal Edildi", Selected = Model.OrderStatus == "İptal Edildi" }
     };
 }
@@ -61,14 +62,75 @@
         <div class="form-group">
             @Html.LabelFor(model => model.TrackingNumber, "Takip No", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.TrackingNumber, new { htmlAttributes = new { @class = "form-control", placeholder = "Kargo takip numarasını girin" } })
+                @{
+                    // Mevcut değerden kargo şirketini ve takip numarasını ayır
+                    string currentCargo = "";
+                    string currentTracking = Model.TrackingNumber ?? "";
+                    if (currentTracking.StartsWith("[") && currentTracking.Contains("]"))
+                    {
+                        int endBracket = currentTracking.IndexOf("]");
+                        currentCargo = currentTracking.Substring(1, endBracket - 1);
+                        currentTracking = currentTracking.Substring(endBracket + 1).Trim();
+                    }
+                }
+                <input type="text" id="TrackingNumber" name="TrackingNumberDisplay" class="form-control"
+                       placeholder="Kargo takip numarasını girin" value="@currentTracking" />
+                <input type="hidden" id="TrackingNumberHidden" name="TrackingNumber" value="@Model.TrackingNumber" />
                 @Html.ValidationMessageFor(model => model.TrackingNumber, "", new { @class = "text-danger" })
+                <span id="trackingWarning" class="text-danger" style="display:none; font-weight:600;">
+                    <i class="fas fa-exclamation-triangle"></i> Kargoda durumu için takip numarası zorunludur!
+                </span>
+
+                <!-- Kargo Şirketi Seçimi -->
+                <div id="cargoCompanySection" style="display:none; margin-top: 14px;">
+                    <label style="font-weight:600; color:#555; margin-bottom:10px; display:block;">
+                        <i class="fas fa-truck"></i> Kargo Şirketi Seçin
+                    </label>
+                    <div class="cargo-options">
+                        <label class="cargo-option">
+                            <input type="radio" name="CargoCompany" value="DHL" @(currentCargo == "DHL" ? "checked" : "") />
+                            <div class="cargo-card">
+                                <img src="@Url.Content("~/Content/Images/cargo/dhl.svg")" alt="DHL" />
+                            </div>
+                        </label>
+                        <label class="cargo-option">
+                            <input type="radio" name="CargoCompany" value="FedEx" @(currentCargo == "FedEx" ? "checked" : "") />
+                            <div class="cargo-card">
+                                <img src="@Url.Content("~/Content/Images/cargo/fedex.svg")" alt="FedEx" />
+                            </div>
+                        </label>
+                        <label class="cargo-option">
+                            <input type="radio" name="CargoCompany" value="Yurtiçi" @(currentCargo == "Yurtiçi" ? "checked" : "") />
+                            <div class="cargo-card">
+                                <img src="@Url.Content("~/Content/Images/cargo/yurtici.svg")" alt="Yurtiçi Kargo" />
+                            </div>
+                        </label>
+                        <label class="cargo-option">
+                            <input type="radio" name="CargoCompany" value="Aras" @(currentCargo == "Aras" ? "checked" : "") />
+                            <div class="cargo-card">
+                                <img src="@Url.Content("~/Content/Images/cargo/aras.svg")" alt="Aras Kargo" />
+                            </div>
+                        </label>
+                        <label class="cargo-option">
+                            <input type="radio" name="CargoCompany" value="UPS" @(currentCargo == "UPS" ? "checked" : "") />
+                            <div class="cargo-card">
+                                <img src="@Url.Content("~/Content/Images/cargo/ups.svg")" alt="UPS" />
+                            </div>
+                        </label>
+                        <label class="cargo-option">
+                            <input type="radio" name="CargoCompany" value="PTT" @(currentCargo == "PTT" ? "checked" : "") />
+                            <div class="cargo-card">
+                                <img src="@Url.Content("~/Content/Images/cargo/ptt.svg")" alt="PTT Kargo" />
+                            </div>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Güncelle" class="btn btn-primary" />
+                <input type="submit" value="Güncelle" class="btn btn-primary" id="btnSubmit" />
             </div>
         </div>
     </div>
@@ -77,3 +139,152 @@
 <div>
     @Html.ActionLink("Tüm Liste", "Index")
 </div>
+
+<style>
+    .cargo-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    .cargo-option {
+        cursor: pointer;
+        margin: 0;
+    }
+    .cargo-option input[type="radio"] {
+        display: none;
+    }
+    .cargo-card {
+        height: 58px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px;
+        background: #fff;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .cargo-card::after {
+        content: '\f00c';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        position: absolute;
+        top: 4px;
+        right: 6px;
+        font-size: 10px;
+        color: #fff;
+        background: #28a745;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s;
+    }
+    .cargo-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        transform: translateY(-2px);
+    }
+    .cargo-option input[type="radio"]:checked + .cargo-card {
+        border-color: #28a745;
+        box-shadow: 0 4px 18px rgba(40, 167, 69, 0.25);
+        background: #f0fff4;
+    }
+    .cargo-option input[type="radio"]:checked + .cargo-card::after {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .cargo-card img {
+        max-width: 100%;
+        max-height: 44px;
+        object-fit: contain;
+        filter: grayscale(20%);
+        transition: filter 0.3s;
+    }
+    .cargo-option input[type="radio"]:checked + .cargo-card img,
+    .cargo-card:hover img {
+        filter: grayscale(0%);
+    }
+</style>
+
+<script>
+    (function () {
+        var statusSelect = document.getElementById('OrderStatus');
+        var trackingInput = document.getElementById('TrackingNumber');
+        var trackingHidden = document.getElementById('TrackingNumberHidden');
+        var trackingWarning = document.getElementById('trackingWarning');
+        var cargoSection = document.getElementById('cargoCompanySection');
+        var form = document.querySelector('form');
+
+        function updateHiddenField() {
+            var trackNo = trackingInput.value.trim();
+            var selectedCargo = document.querySelector('input[name="CargoCompany"]:checked');
+            if (trackNo && selectedCargo) {
+                trackingHidden.value = '[' + selectedCargo.value + '] ' + trackNo;
+            } else {
+                trackingHidden.value = trackNo;
+            }
+        }
+
+        function toggleCargoSection() {
+            var hasTracking = trackingInput.value.trim().length > 0;
+            cargoSection.style.display = hasTracking ? 'block' : 'none';
+        }
+
+        function checkKargoda() {
+            if (statusSelect.value === 'Kargoda') {
+                if (!trackingInput.value.trim()) {
+                    trackingInput.style.borderColor = '#dc3545';
+                    trackingInput.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.15)';
+                    trackingWarning.style.display = 'block';
+                    return false;
+                } else {
+                    trackingInput.style.borderColor = '#28a745';
+                    trackingInput.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.15)';
+                    trackingWarning.style.display = 'none';
+                    return true;
+                }
+            } else {
+                trackingInput.style.borderColor = '';
+                trackingInput.style.boxShadow = '';
+                trackingWarning.style.display = 'none';
+                return true;
+            }
+        }
+
+        statusSelect.addEventListener('change', function () {
+            checkKargoda();
+        });
+
+        trackingInput.addEventListener('input', function () {
+            toggleCargoSection();
+            checkKargoda();
+            updateHiddenField();
+        });
+
+        // Kargo şirketi değişince hidden field güncelle
+        document.querySelectorAll('input[name="CargoCompany"]').forEach(function (radio) {
+            radio.addEventListener('change', updateHiddenField);
+        });
+
+        form.addEventListener('submit', function (e) {
+            updateHiddenField();
+            if (!checkKargoda()) {
+                e.preventDefault();
+                trackingInput.focus();
+                return false;
+            }
+        });
+
+        // Sayfa yüklendiğinde
+        toggleCargoSection();
+        checkKargoda();
+    })();
+</script>
+
